@@ -1,0 +1,35 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+.styledTextInputs + label
+{
+  position: absolute;
+  transition: all 0.3s ease-in-out;
+  left: .5rem;
+  top: 0;
+}
+.styledTextInputs:focus+label
+{
+  top: -1.15rem;
+  color : rgb(154, 152, 152)
+}
+.styledTextInputs:not(:placeholder-shown)+label
+{
+  top: -1.15rem;
+  color : rgb(154, 152, 152)
+}
