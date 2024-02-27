@@ -401,6 +401,12 @@ def bess_filter(data):
     # footprint_kWh = 37 #in cm^2 using values from Tesla Megapack 
 
     #BESS variables
+    #BESS variables
+    #-----new BESS capacity variable: sets the recommended capacity to the BESS_capacity_rec vairable. This allows BESS_capaicty to be updated by users
+    #-----uncomment the 2 lines below. Delete the old BESS_capacity = maxstateofCharge line ----
+    #BESS_capacity_rec = maxstateofCharge
+    #BESS_capacity = 500
+
     BESS_capacity = maxstateofCharge
     power_duration =int( data['inputs']['selectInput']) # Use duration to calculate power based on BESS Capacity. N/A (0) uses maxpower needed to shave the peak
     if power_duration == 0:
@@ -437,9 +443,41 @@ def bess_calculatiion():
 
 
 #-------------------------End Create BESS DF -----------------------------------------------------------'''
+'''
+#------------------component: monthly load profile by date range ---------------------------
 
+#Get date and time and combine into datetime variable
+startDateLP = date(2019,1,1)
+startTimeLP = time(00,00)
+endDateLP = date(2019,1,1)
+endTimeLP = time(23,59)
+startDateTimeLP = dt.combine(startDateLP, startTimeLP)
+endDateTimeLP = dt.combine(endDateLP, endTimeLP)
 
+#filter the dateframe by the date range and set x and y variables
+filtered_df = df[(df['Date'].dt.date >= startDateLP) & (df['Date'].dt.date <= endDateLP)]
+xDateTime = filtered_df.loc[:,"Date"].values.astype('datetime64[m]') 
+monthlyDemandData = filtered_df.loc[:,"Demand"].values
 
+#create date plot and formatting
+fig_LPbyDate = make_subplots(rows=1, cols=1)    
+fig_LPbyDate.update_xaxes(tickformat="%m/%d \n%H:%M", title_text="Date")
+
+fig_LPbyDate.update_layout(
+    xaxis=dict(tickangle=-45),
+    title= " Load Profile: " + buildingName + " \nDate Range: " + startDateTimeLP.strftime("%m/%d/%y %H:%M") + " - " + endDateTimeLP.strftime("%m/%d/%y %H:%M"),
+    xaxis_title="Date",
+    yaxis_title="Demand (kW)",
+    legend=dict(orientation="h"),
+    margin=dict(l=10, r=10, t=30, b=20),
+    showlegend=False
+)
+
+fig_LPbyDate.add_trace(
+    go.Scatter(x=xDateTime, y=monthlyDemandData, mode="lines")
+)
+#------------------component: monthly load profile by date range ---------------------------
+'''
 #-----------------------component: comp_3D_daily_plot----------------------------
 
 @app.route('/give_comp_3D_daily_plot')
