@@ -17,6 +17,7 @@ export default function NumbersData({selectionUpdated}) {
     selectInput: 4,
     depthDischarge: 15,
     footprint: 37,
+    bessCapacity : 500
   });
   const [numberLoaded, setNumberLoaded] = React.useState(false);
   const [underProcess , setUnderProcess] = React.useState(false);
@@ -89,7 +90,7 @@ export default function NumbersData({selectionUpdated}) {
               const words = `${val.label}`.split(patterns.SUPERSCRIPTPATTER); 
               const startingPos = val.label.search(patterns.SUPERSCRIPTPATTER);
               const value = val.label.slice(startingPos).split("SUP{").join("").split("}")[0];
-              console.log({words})
+              console.log({words});
               return (
                 <div
                   key={id}
@@ -218,6 +219,23 @@ export default function NumbersData({selectionUpdated}) {
                       type="number"
                     />
               </div> : <div className=" w-full h-[2.7rem]"></div>}
+            </div>
+            <div className=" w-full flex flex-col">
+              <label className="text-[1.1rem] items-center   flex text-slate-400">
+                BESS Capacity
+              </label>
+              <input
+                    step="0.01"
+                      className={stylings[theme].calculation.floatInput}
+                      onChange={(e) => {
+                        setInputs({
+                          ...inputs,
+                          bessCapacity: e.target.value,
+                        });
+                      }}
+                      value={inputs.bessCapacity}
+                      type="number"
+                    />
             </div>
           </div>
         </div>

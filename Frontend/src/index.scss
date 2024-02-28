@@ -33,3 +33,8 @@ code {
   top: -1.15rem;
   color : rgb(154, 152, 152)
 }
+input.ULInput::-webkit-outer-spin-button,
+input.ULInput::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}

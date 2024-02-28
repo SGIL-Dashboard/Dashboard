@@ -31,7 +31,7 @@ export const stylings = {
    subParent : "w-[60%] border-r-[0.1rem] border-slate-200 px-[3rem] h-fit flex-col justify-between flex",
    rangeParent : "flex items-start justify-start flex-col",
    rangeInput : "styledRange w-full",
-   floatInput : " outline-none bg-transparent  text-[1.5rem] shrink-0 border-b-[0.15rem] duration-300 ease-in-out border-blue-900",
+   floatInput : " outline-none ULInput bg-transparent  text-[1.5rem] shrink-0 border-b-[0.15rem] duration-300 ease-in-out border-blue-900",
    submitButton : "text-[1.2rem] outline-none flex items-center justify-center hover:bg-blue-900 hover:text-white ease-in-out duration-100 text-blue-900 border-[0.1rem] h-[2.4rem] rounded-md w-[8rem] border-blue-900",
    value : "text-[1.9rem] text-blue-900 font-bold"
   },

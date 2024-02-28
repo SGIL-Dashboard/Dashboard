@@ -155,8 +155,8 @@ const darkThemeChartStylings =theme === "dark" ? {paper_bgcolor : "#1F2937" , fo
        })}
       </div>
      </div>
-     <div className="w-[70%] flex flex-col h-[38rem] justify-start shrink-0 overflow-hidden items-center">
-     {loaded ?      <div style={{transform : `translateY(${-selected*38}rem)`}} className=" w-full ease-in-out duration-500 h-[400%] shrink-0 flex flex-col items-center">
+     <div className="w-[70%] flex flex-col h-[45rem] justify-start shrink-0 overflow-hidden items-center">
+     {loaded ?      <div style={{transform : `translateY(${-selected*45}rem)`}} className=" w-full ease-in-out duration-500 h-[400%] shrink-0 flex flex-col items-center">
         <div className=" MonthlyChart relative w-full h-[25%] shrink-0 flex flex-col items-center justify-center">
           <div className="w-full h-full flex flex-col items-center justify-center gap-[1rem]">
             <SVGComponent selector="clock" width = "w-[4rem]" color='grey'/>
@@ -165,7 +165,7 @@ const darkThemeChartStylings =theme === "dark" ? {paper_bgcolor : "#1F2937" , fo
           {daily3Data?.data && <div className=' w-full pt-[1rem] h-full absolute top-0 left-0 flex flex-col items-center justify-start z-[1]'>
             <PlotlyComponent data={profileData.data} layout={{...profileData.layout , height : 500 , width : 790 , ...darkThemeChartStylings}}/>
             <div className=" flex-grow flex items-center justify-evenly w-full">
-              <select className={stylings[theme].chartSelection.chartSelectorContainer.form.select} onChange={(e)=>
+              {/* <select className={stylings[theme].chartSelection.chartSelectorContainer.form.select} onChange={(e)=>
                 {
                   setSelectedMonth(e.target.value);
                 }} value={selectedMonth}>
@@ -173,7 +173,10 @@ const darkThemeChartStylings =theme === "dark" ? {paper_bgcolor : "#1F2937" , fo
                 {
                   return <option key={id} value={id+1}>{val}</option>
                 })}
-              </select>
+              </select> */}
+              <div className="div relative w-[17rem] h-[5.6rem] rounded-xl shrink-0 flex flex-col border-[0.15rem] border-slate-400">
+                <span className=' text-[1.1rem] bg-white items-center absolute px-[.5rem] top-[-0.9rem] left-[1rem]  flex text-slate-400 '>From</span>
+              </div>
               {formHelpers.map((val , id)=>
               {
                 return<div key={id} className=" flex items-center gap-[.5rem]"><input checked={checkboxes[val.accessor]} onChange={(e)=>
@@ -186,7 +189,7 @@ const darkThemeChartStylings =theme === "dark" ? {paper_bgcolor : "#1F2937" , fo
             </div>
             </div>}
         </div>
-        <div className=" MonthlyChart relative w-full h-[25%] shrink-0 flex flex-col items-center justify-center">
+        <div className=" MonthlyChart pt-[3rem] relative w-full h-[25%] shrink-0 flex flex-col items-center justify-center">
           <div className="w-full h-full flex flex-col items-center justify-center gap-[1rem]">
             <SVGComponent selector="clock" width = "w-[4rem]" color='grey' />
             <span className='text-[1.4rem] text-slate-500 font-semibold'>Getting Your Chart Ready Please Wait</span>

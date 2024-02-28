@@ -401,13 +401,12 @@ def bess_filter(data):
     # footprint_kWh = 37 #in cm^2 using values from Tesla Megapack 
 
     #BESS variables
-    #BESS variables
     #-----new BESS capacity variable: sets the recommended capacity to the BESS_capacity_rec vairable. This allows BESS_capaicty to be updated by users
     #-----uncomment the 2 lines below. Delete the old BESS_capacity = maxstateofCharge line ----
-    #BESS_capacity_rec = maxstateofCharge
-    #BESS_capacity = 500
+    BESS_capacity_rec = maxstateofCharge
+    BESS_capacity = 500
 
-    BESS_capacity = maxstateofCharge
+    # BESS_capacity = maxstateofCharge
     power_duration =int( data['inputs']['selectInput']) # Use duration to calculate power based on BESS Capacity. N/A (0) uses maxpower needed to shave the peak
     if power_duration == 0:
         BESS_power = math.ceil(maxPeakDemandShaving)
