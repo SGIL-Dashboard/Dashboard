@@ -3,6 +3,13 @@ import CryptoJS from "crypto-js";
 import toast from "react-hot-toast";
 const encrypt = (text  , key  = "salt")=>CryptoJS.AES.encrypt(text,key).toString();
 const decrypt = ( cipherText  , key  = "salt")=>CryptoJS.AES.decrypt(cipherText,key).toString(CryptoJS.enc.Utf8);
+export const insertCommas = (number)=>
+{
+  // let initialText = `${number}`.slice(0 , -3);
+	// const lastThree = `${number}`.slice(-3);
+	return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+	// return`${initialText},${lastThree}`;
+}
 export const makeApiRequest = async({method , urlPath , body , encryptedKeys , convertToFormData , token})=>
 {
  let config = {};

@@ -13,6 +13,7 @@ import toast from "react-hot-toast";
 import { stylings } from "../UTILS/UTILS_STYLES";
 import { globalContext } from "../Context/Context";
 import { useContext } from "react";
+import FinancialAnalysis from "./Financial_Analysis/Financial_Analysis";
 const FileSelector = () => {
   const {theme} = useContext(globalContext);
   const [selectedOption, setSelectedOption] = useState("Administration Building.xlsx");
@@ -27,6 +28,7 @@ const FileSelector = () => {
   const [uploadFileUnderProcess , setUploadFileUnderProcess] = useState(false);
   const [dfData, setDfData] = useState();
   const [fName , setFName] = useState("");
+  const [bessCost , setBessCost] = React.useState("");
   const handleDropdownChange = (event) => {
     setSelectedOption(event.target.value);
   };
@@ -110,15 +112,13 @@ const FileSelector = () => {
     <div className=" w-full flex flex-col">
       <div className={stylings[theme].introSection.parent}>
       <div className=" w-full h-fit flex  py-[3rem] items-center justify-evenly shrink-0">
-        <div className="flex w-1/2 flex-col items-start justify-center">  
+        <div className="flex w-1/2 flex-col items-start h-full justify-start">  
           <h1 className={stylings[theme].introSection.heading}>
-            {`Building Load Profile Analysis for ${
-              selectedOption.split(".xlsx")[0]
-            }`}
+            {`Building Load Profile Analysis for `}<span className=" whitespace-nowrap">{selectedOption.split(".xlsx")[0]}</span>
           </h1>
-          <h1 className={stylings[theme].introSection.heading}>
+          {/* <h1 className={stylings[theme].introSection.heading}>
           Battery Energy Storage Sizing
-          </h1>
+          </h1> */}
         </div>
         {expandImg ? <Popup onClose={()=>
           {
@@ -252,11 +252,12 @@ const FileSelector = () => {
           </h1>
         )} */}
       </div>
-      <NumbersData selectionUpdated={selectionUpdated}/>
+      <NumbersData selectionUpdated={selectionUpdated} setBessCost={setBessCost}/>
       <Charts_handling
         selectedOption={selectedOption}
         selectionUpdated={selectionUpdated}
       />
+      <FinancialAnalysis bessCost={bessCost}/>
     </div>
   );
 };

@@ -7,7 +7,8 @@ import { patterns } from "../../UTILS/UTILS_PATTERNS";
 import { stylings } from "../../UTILS/UTILS_STYLES";
 import { globalContext } from "../../Context/Context";
 import { useContext } from "react";
-export default function NumbersData({selectionUpdated}) {
+import { insertCommas } from "../../UTILS/UTILS_HELPERS";
+export default function NumbersData({selectionUpdated , setBessCost}) {
   const { theme } = useContext(globalContext);
   const [inputs, setInputs] = React.useState({
     floatInput1: 967.5,
@@ -42,9 +43,9 @@ export default function NumbersData({selectionUpdated}) {
   };
   const valuesRenderHelpers = [
    {label : "EST BESS Capacity (kWh)" , accessor : "BESS_capacity"},
-   {label : "BESS Cost" , accessor : "BESS_cost"},
-   {label : "BESS Footprint (ftSUP{2})" , accessor : "BESS_footprint"},
    {label : "BESS Power (kW)" , accessor : "BESS_power"},
+   {label : "BESS Footprint (ftSUP{2})" , accessor : "BESS_footprint"},
+   {label : "BESS Cost" , accessor : "BESS_cost"},
   ]
   const handleSubmit = async()=>
   {
@@ -56,6 +57,7 @@ export default function NumbersData({selectionUpdated}) {
      { inputs }
      );
      setBessOut(response.data);
+     setBessCost(response.data.BESS_cost);
      setUnderProcess(false);
      setNumberLoaded(true);
    }
@@ -272,7 +274,7 @@ export default function NumbersData({selectionUpdated}) {
                       }
                       return <span>{val}</span>
                     }) :val.label}</label>
-              <span className={stylings[theme].calculation.value}>{val.accessor === "BESS_cost" ? "$" : ""}{bessOut[val.accessor]}</span>
+              <span className={stylings[theme].calculation.value}>{val.accessor === "BESS_cost" ? `${"$"}${insertCommas(bessOut[val.accessor])}` : bessOut[val.accessor]}</span>
               </div>
              </div>
             )

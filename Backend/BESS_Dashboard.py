@@ -116,15 +116,20 @@ def file_selection():
             uid=data['UID']
             filename=data['selectedOption']
             uid=data['UID']
-            print("data=======>",data)
+            # print("data=======>",data)
             data_filepath = os.path.join(directory, data_folder, filename)
             file = pd.read_excel(data_filepath)
             df=file
             buildingName = filename.replace('.xlsx','')
         
         # df=file.parse("PyLoad")
+            
+
+        
+       
         
         data_preprocessing(df,uid)
+        
         return jsonify({'status':"success"})
 
     except:
@@ -140,10 +145,10 @@ def get_all_files():
     try:
 
         all_file_folder=os.path.join(directory, data_folder)
-        print(all_file_folder)
+        # print(all_file_folder)
         # Get the list of files in the folder
         data_file_list = os.listdir(all_file_folder)
-        print("data_file_list=>",data_file_list)
+        # print("data_file_list=>",data_file_list)
         return jsonify({"all_file":data_file_list})
               
     except Exception as e:
@@ -163,6 +168,157 @@ def data_preprocessing(df,uid):
     global peak_demand_bar
     global results_folder
    
+
+
+
+
+#split out the Date column into discreet date and time columns
+    df["Idx"] = df["Date"]
+    df["Day"] = df["Date"].dt.day
+    df["DayofWeek"] = df["Date"].dt.dayofweek
+    df["Month"] = df["Date"].dt.month
+    df["MonthDay"] = df["Date"].dt.day
+    df["Year"] = df["Date"].dt.year
+    df["Hour"] = df["Date"].dt.hour
+    df["Minute"] = df["Date"].dt.minute
+    df.set_index('Idx', inplace=True)
+    results_folder=results_folder.split("/")[0]
+    results_folder=results_folder+"/"+str(uid)
+    # print("our result folder=>",results_folder)
+    # Create the folder if it doesn't exist
+    if not os.path.exists(results_folder):
+        os.makedirs(results_folder)
+        print("Folder created successfully")
+    else:
+        print("Folder already exists")
+
+    results_filepath = os.path.join(directory, results_folder)
+
+    # Get the list of files in the folder
+    file_list = os.listdir(results_filepath)
+
+    print(file_list)
+    # Iterate through the files and delete them
+    for file_name in file_list:
+        file_path = os.path.join(results_filepath, file_name)
+        try:
+            os.remove(file_path)
+            print(f"Deleted: {file_path}")
+        except Exception as e:
+            print(f"Error deleting {file_path}: {e}")
+
+    df.to_excel(os.path.join(directory, results_folder, "df_index_code.xlsx"), index=False)
+
+    #-------------------- End General Create DFs ---------------------------------------------------------------
+
+    #---------------------Start Create Monthly Data DF (bar chart) ----------------------------------------------------------
+   
+    #aggregate data
+    maxMonthlyValue = df.groupby(["Year","Month"])["Demand"].aggregate(peakMonthlyDemand = 'max') 
+    avgMonthlyValue = df.groupby(["Year", "Month"])["Demand"].aggregate(avgMonthlyDemand = 'mean')
+    peakDemand = df["Demand"].max() 
+    avgDailyValue = df.groupby(["Year", "Month","Day"])["Demand"].aggregate(dailyAvgDemand = 'mean')
+    maxAvgValue = avgDailyValue.groupby(["Year","Month"])["dailyAvgDemand"].aggregate(maxAvgDemand = 'max')
+
+    
+    avgMonthlyDemand = avgMonthlyValue.values.flatten()
+    peakMonthlyDemand = maxMonthlyValue.values.flatten()
+    peakDailyDemand = maxAvgValue.values.flatten()
+    maxPeakDailyDemand = peakDailyDemand.max()
+    monthlyPeakDemandShaving = peakMonthlyDemand - peakDailyDemand
+    monthlyPeakDemandShaving=np.array(monthlyPeakDemandShaving)
+    print(monthlyPeakDemandShaving)
+    maxPeakDemandShaving = monthlyPeakDemandShaving.max()
+
+    monthly_data = {
+        "Month": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+        "MonthlyPeakDemand": peakMonthlyDemand,
+        "MaxDemandShaving": monthlyPeakDemandShaving,
+        "PeakDailyDemand": peakDailyDemand,
+    }
+    
+    
+    bar_graph_data=monthly_data
+
+    aggregated_df = pd.DataFrame(monthly_data)
+    
+    aggregated_df.to_excel(os.path.join(directory, results_folder, "aggregated_df.xlsx"), index=False)
+
+    
+    #'''-------------------- Start Create Pivots for 3D Graphs -----------------------------------------------
+
+    # Resample the data to average hourly demand
+    monthly_resample = df.resample('H').mean()
+    daily_resample = df.resample('H').mean()
+
+    # Create new columns for month and hour
+    monthly_resample['Hour'] = monthly_resample.index.hour
+    monthly_resample['Month'] = monthly_resample.index.month
+
+    daily_resample['Hour'] = monthly_resample.index.hour
+    daily_resample['DayofWeek'] = monthly_resample.index.dayofweek
+
+
+    # Pivot the data to get it in the desired format
+    monthly_pivot = monthly_resample.pivot_table(values='Demand', index='Hour', columns='Month')
+    daily_pivot = daily_resample.pivot_table(values='Demand', index='Hour', columns='DayofWeek')
+
+    monthly_pivot.to_excel(os.path.join(directory, results_filepath, 'monthly_pivot.xlsx'), index=False)
+    daily_pivot.to_excel(os.path.join(directory, results_filepath, 'daily_pivot.xlsx'), index=False)
+
+    
+    x_daily = np.array(daily_pivot.index)
+    y_daily = np.array(daily_pivot.columns)
+    z_daily = np.array(daily_pivot)
+    fig_daily_title = 'Load Profile for ' + buildingName + ': Daily Variation' 
+    x_monthly = np.array(monthly_pivot.index) 
+    y_monthly = np.array(monthly_pivot.columns)
+    z_monthly = np.array(monthly_pivot)
+    fig_month_title = 'Load Profile for ' + buildingName + ': Monthly Variation' 
+
+    print("WE ARE HERE","*"*50)
+    # print(MaxDemandShaving,peakDailyDemand)
+    print(type(peakDailyDemand),type(MaxDemandShaving))
+
+
+    peak_demand_bar = px.bar( aggregated_df, x="Month", y=["PeakDailyDemand", "MaxDemandShaving"] ,
+             title="Monthly Peak and Average Demand: " + buildingName,
+             labels={"value": "Demand"},
+             hover_name="Month", 
+             hover_data=["MonthlyPeakDemand"],
+             height=600,
+              
+            )
+
+    peak_demand_bar.update_layout(
+        legend=dict(orientation="h"),
+        margin=dict(l=10, r=10, t=25, b=40)
+        )  
+    
+    print("we are done with file creation")
+    peak_demand_bar= peak_demand_bar.to_json(peak_demand_bar)
+
+    # bar_graph_data=jsonify({"PeakDailyDemand":PeakDailyDemand,"MaxDemandShaving":MaxDemandShaving,
+    #                 "buildingName":buildingName
+    #                 })
+  
+
+    
+    
+def data_preprocessing_date(df,uid,start_date,end_date,start_time,end_time):
+    print("this function data preprocessing called")
+    global maxMonthlyValue,avgMonthlyValue,peakDemand,avgDailyValue,maxAvgValue,avgMonthlyDemand
+    global peakMonthlyDemand,peakDailyDemand,maxPeakDailyDemand
+    global monthlyPeakDemandShaving,maxPeakDailyDemand,maxPeakDemandShaving,MaxDemandShaving
+    global x_daily,y_daily,z_daily,fig_daily_title
+    global x_monthly,y_monthly,z_monthly,fig_month_title
+    global peak_demand_bar
+    global results_folder
+   
+
+    df = df[(df['date'] >= start_date) & (df['date'] <= end_date) & 
+                
+                   (df['start_time'] >= start_time) & (df['end_time'] <= end_time)]
 
 
 #split out the Date column into discreet date and time columns
@@ -290,12 +446,12 @@ def data_preprocessing(df,uid):
     
     print("we are done with file creation")
     peak_demand_bar= peak_demand_bar.to_json(peak_demand_bar)
-
+    
     # bar_graph_data=jsonify({"PeakDailyDemand":PeakDailyDemand,"MaxDemandShaving":MaxDemandShaving,
     #                 "buildingName":buildingName
     #                 })
   
-        
+
     
 #-------------------- End Create Pivots for 3D Graphs -----------------------------------------------'''
 
@@ -314,26 +470,22 @@ def bess_filter(data):
     maxstateofCharge = 1
     maxESS = 0
     minSOC = -1
-    dod = ((float( data['inputs']['depthDischarge']))/100)
+    dod = 1-((float( data['inputs']['depthDischarge']))/100)
 
     while (minSOC < 1 or 1-dod < maxESS/maxstateofCharge):
         #print("minSOC: ", minSOC)
         #print("maxstateofCharge: ", maxstateofCharge)
-        
         for i in range(1,13):
             monthName = calendar.month_name[i]
             #print(monthName)
-
             #Get data for the month
             currentMonthDataDF = df.loc[df["Date"].dt.month == i]
             currentPeakDemand = peakDailyDemand[i-1]
             xDateTime = currentMonthDataDF.loc[:,"Date"].values.astype('datetime64[m]') 
             yDemandData = currentMonthDataDF.loc[:,"Demand"].values
-            
             #find the indices where the two currentPeakDemand curve intersects the DemandData curve
             idx = np.argwhere(np.diff(np.sign(currentPeakDemand - yDemandData))).flatten()
             sizeofidx = xDateTime[idx].shape
-
             #maxStateofCharge is the highest charge the battery can attain, stateOfCharge is the current SOC of the battery
             #set to 0 initially, then set to ESS capacity to determine the battery size. 
             #Make sure min SOC does not fall below the required depth of discharge
@@ -378,7 +530,7 @@ def bess_filter(data):
                 
                 essData = {'Month': monthName,'Energy': energy,'Duration': duration,'StartTime': startDate,'EndTime': endDate,'Charge': charge,'SOC': stateOfCharge} 
                 dispatchSchedule.loc[len(dispatchSchedule)] = essData
-        
+
         minSOC = dispatchSchedule['SOC'].min()
         maxESS = dispatchSchedule['Energy'].max()
         maxstateofCharge = math.ceil(maxESS / (1-dod))
@@ -404,14 +556,14 @@ def bess_filter(data):
     #-----new BESS capacity variable: sets the recommended capacity to the BESS_capacity_rec vairable. This allows BESS_capaicty to be updated by users
     #-----uncomment the 2 lines below. Delete the old BESS_capacity = maxstateofCharge line ----
     BESS_capacity_rec = maxstateofCharge
-    BESS_capacity = 500
+    BESS_capacity = data['inputs']['bessCapacity']
 
     # BESS_capacity = maxstateofCharge
     power_duration =int( data['inputs']['selectInput']) # Use duration to calculate power based on BESS Capacity. N/A (0) uses maxpower needed to shave the peak
     if power_duration == 0:
         BESS_power = math.ceil(maxPeakDemandShaving)
     if power_duration > 0:
-        BESS_power = math.ceil(maxstateofCharge/power_duration)    
+        BESS_power = math.ceil(BESS_capacity/power_duration)    
     BESS_cost = (OMCost_kWh * BESS_capacity + OMCost_fixed) + (capitalCost_kWh * BESS_capacity + capitalCost_kW * BESS_power)
     BESS_footprint = BESS_capacity * footprint_kWh
 
@@ -422,7 +574,7 @@ def bess_filter(data):
     print("BESS Cost ($): ", BESS_cost)
     print("BESS Footprint (ft^2): ", BESS_footprint)
 
-    return jsonify({'BESS_capacity':BESS_capacity,"BESS_power":BESS_power,"BESS_cost":BESS_cost,"BESS_footprint":BESS_footprint})
+    return jsonify({'BESS_capacity':BESS_capacity,"BESS_power":BESS_power,"BESS_cost":BESS_cost,"BESS_footprint":BESS_footprint , "BESS_capacity_rec" : maxstateofCharge})
 
 @app.route('/bess_calculation', methods=['POST'])
 def bess_calculatiion():
@@ -553,14 +705,18 @@ def apply_filter(month_val,checkboxes):
         monthValue = month_val
         monthName = calendar.month_name[monthValue]
         currentMonthDataDF = df.loc[df["Date"].dt.month == monthValue]
+        # if startdate & end_date:
+        #     currentMonthDataDF = df[(df['date'] >= start_date) & (df['date'] <= end_date) ]
+        print(currentMonthDataDF)
         xDateTime = currentMonthDataDF.loc[:,"Date"].values.astype('datetime64[m]') 
+        # xDateTime = currentMonthDataDF.loc[:,"Date"]
 
         global fig_monthlyDemand
         # Create a subplot with one plot for all curves
         fig_monthlyDemand = make_subplots(rows=1, cols=1)    
 
         # Update x-axis date formatting
-        fig_monthlyDemand.update_xaxes(tickformat="%m/%d", title_text="Date")
+        fig_monthlyDemand.update_xaxes(tickformat="%m/%d %H:%M", title_text="Date")
 
         # Update layout
         fig_monthlyDemand.update_layout(
@@ -568,10 +724,25 @@ def apply_filter(month_val,checkboxes):
             title= monthName + " Load Profile: " + buildingName,
             xaxis_title="Date",
             yaxis_title="Demand (kW)",
-            legend=dict(orientation="h"),
+            # legend=dict(orientation="v", xanchor="right", yanchor="bottom"),
+            # legend=dict(orientation="h", xanchor="right", yanchor="bottom"),
             height=600,
             margin=dict(l=10, r=10, t=25, b=80),
-            showlegend=True
+            showlegend=True,
+        #     annotations=[
+        # dict(
+        #     x=-1,
+        #     y=-2,
+        #     xref="paper",
+        #     yref="paper",
+        #     text="Your Custom Text",
+        #     showarrow=False,
+        #     font=dict(
+        #         size=12,
+        #         color="black"
+        #     )
+        # )
+    # ]
         )
 
         
@@ -589,6 +760,7 @@ def apply_filter(month_val,checkboxes):
                 go.Scatter(x=[min(xDateTime), max(xDateTime)],
                         y=[peakDailyAvgDemandData, peakDailyAvgDemandData],
                         mode="lines",
+                        
                         name="Peak Daily Avg. Demand",
                         line=dict(color="yellow", dash="dash"))
             )
@@ -596,10 +768,10 @@ def apply_filter(month_val,checkboxes):
             x=max(xDateTime),  # x-coordinate of the annotation
             y=peakDailyAvgDemandData,  # y-coordinate of the annotation
             text=f"Peak Daily Avg. Demand: {peakDailyAvgDemandData:.2f}",  # Text to display in the annotation with 2 decimal places
-            showarrow=False,  # Show arrow pointing to the annotation
-            arrowhead=2,  # Arrowhead style
+            showarrow=True,  # Show arrow pointing to the annotation
+            arrowhead=1,  # Arrowhead style
             ax=0,  # Arrow's x-direction
-            ay=-40,  # Arrow's y-direction
+            ay=-20,  # Arrow's y-direction
             font=dict(color="black")  # Text color
         )
 
@@ -622,10 +794,10 @@ def apply_filter(month_val,checkboxes):
                 x=max(xDateTime),  # x-coordinate of the annotation
                 y=avgMonthlyDemandData,  # y-coordinate of the annotation
                 text=f"Monthly Avg. Demand: {avgMonthlyDemandData:.2f}",  # Text to display in the annotation with 2 decimal places
-                showarrow=False,  # Show arrow pointing to the annotation
-                arrowhead=0,  # Arrowhead style
+                showarrow=True,  # Show arrow pointing to the annotation
+                arrowhead=1,  # Arrowhead style
                 ax=0,  # Arrow's x-direction
-                # ay=-40,  # Arrow's y-direction
+                ay=-20,  # Arrow's y-direction
                 font=dict(color="green")  # Text color
             )
           
@@ -644,7 +816,10 @@ def apply_filter(month_val,checkboxes):
             fig_monthlyDemand.add_annotation( x=max(xDateTime),  # x-coordinate of the annotation
             y=peakMonthlyDemandData,  # y-coordinate of the annotation
             text=f"Peak Demand: {peakMonthlyDemandData:.2f}",  # Text to display in the annotation
-            showarrow=False,
+            showarrow=True,
+            arrowhead=1,  # Arrowhead style
+            ax=0,  # Arrow's x-direction
+            ay=-20,  # Arrow's y-direction
             font=dict(color="red") 
             )
 
@@ -673,6 +848,99 @@ def monthly_demand_profile():
         checkboxes={}
         output=apply_filter(1,checkboxes)
         return output    
+
+
+def apply_date_filter(startdate,end_date):
+        #Get data for the chosen month
+        # monthValue = month_val
+        # monthName = calendar.month_name[monthValue]
+        # currentMonthDataDF = df.loc[df["Date"].dt.month == monthValue]
+        # if startdate & end_date:
+        print("we are on date")
+        print(startdate,end_date)
+        startdate=startdate.replace('T',' ')
+        end_date=end_date.replace('T',' ')
+        # currentMonthDataDF = df.loc[df["Date"].dt.month == monthValue]
+        print(df.dtypes)
+        currentMonthDataDF = df[(df['Date'] >= startdate) & (df['Date'] <= end_date) ]
+        # print(currentMonthDataDF.dytpes)
+        print(currentMonthDataDF)
+        xDateTime = currentMonthDataDF.loc[:,"Date"].values.astype('datetime64[m]') 
+        # xDateTime = currentMonthDataDF.loc[:,"Date"]
+
+        global fig_monthlyDemand
+        # Create a subplot with one plot for all curves
+        fig_monthlyDemand = make_subplots(rows=1, cols=1)    
+
+        # Update x-axis date formatting
+        fig_monthlyDemand.update_xaxes(tickformat="%m/%d %H:%M", title_text="Date")
+
+        # Update layout
+        fig_monthlyDemand.update_layout(
+            xaxis=dict(tickangle=-45),
+            title=  " Load Profile: " + buildingName,
+            xaxis_title="Date",
+            yaxis_title="Demand (kW)",
+            # legend=dict(orientation="v", xanchor="right", yanchor="bottom"),
+            # legend=dict(orientation="h", xanchor="right", yanchor="bottom"),
+            height=600,
+            margin=dict(l=10, r=10, t=25, b=80),
+            showlegend=True,
+       )
+
+        
+
+        # 15 Minute Demand Data Plot
+        monthlyDemandData = currentMonthDataDF.loc[:,"Demand"].values
+        fig_monthlyDemand.add_trace(
+            go.Scatter(x=xDateTime, y=monthlyDemandData, mode="lines",
+                        name="15 Minute Demand Data")
+        )
+
+
+        
+
+        return jsonify(fig_monthlyDemand.to_json())
+
+@app.route('/date_filter', methods=['POST'])
+def date_filter():
+    try:
+        
+        data=request.json
+        print("this is data==>",data)
+        if data['timeSelection']['from']:
+            start_date=data['timeSelection']['from']
+        else:
+            start_date=0
+        if data['timeSelection']['to']:
+            end_date=data['timeSelection']['to']
+        else:
+            end_date=0
+        
+        
+        output=apply_date_filter(start_date,end_date)
+            
+        
+        return output
+    
+    except:
+       
+        output=apply_date_filter(start_date,end_date)
+        return output   
+
+# @app.route('/date_filter', methods=['POST'])
+# def date_filter():
+#     try:
+#         global peak_demand_bar
+#         # return jsonify(peak_demand_bar)
+#         print("rout for get data called")
+#         data=request.json
+#         start_date=request.timeSelection['form']
+#         end_date=request.timeSelection['to']
+#         data_preprocessing_date(df,uid,start_date,end_date,start_time,end_time)
+    
+#     except:
+         
 
 #------------------------------------------End Build the Components ------------------------------------------'''
 
