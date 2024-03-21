@@ -41,7 +41,7 @@ const Bess = () => {
     setBessOut({});
     try {
       const response = await axios.post(
-        "http://localhost:5000/bess_calculation",
+        "http://54.175.34.126:8000/bess_calculation",
         { inputs }
       );
       // console.log(response.data);

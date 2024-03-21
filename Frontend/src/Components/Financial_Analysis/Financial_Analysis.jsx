@@ -210,11 +210,11 @@ export default function FinancialAnalysis({ bessCost }) {
               accessor : "propertyTax"
             },
             {
-              label : "Assedssed Value",
+              label : "Assessed Value",
               accessor : "AssedssedValue"
             },
             {
-              label : "Assedssed Percent",
+              label : "Assessed Percent",
               accessor : "AssedssedPercent"
             }
           ]

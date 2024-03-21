@@ -99,30 +99,30 @@ export default function Charts_handling({ selectionUpdated, selectedOption }) {
   const handleFetchData = async () => {
     try {
       const month3Data = await axios.get(
-        "http://localhost:5000/give_comp_3D_monthly_plot"
+        "http://54.175.34.126:8000/give_comp_3D_monthly_plot"
       );
       setMonth3Data(JSON.parse(month3Data.data));
       const daily3Data = await axios.get(
-        "http://localhost:5000/give_comp_3D_daily_plot"
+        "http://54.175.34.126:8000/give_comp_3D_daily_plot"
       );
       setDaily3Data(JSON.parse(daily3Data.data));
       const profileData = await axios.post(
-        "http://localhost:5000/monthly_demand_profile",
+        "http://54.175.34.126:8000/monthly_demand_profile",
         { selectedMonth, checkboxes }
       );
       setProfileData(JSON.parse(profileData.data));
       const dateRangeProfileData = await axios.post(
-        "http://localhost:5000/date_filter",
+        "http://54.175.34.126:8000/date_filter",
         {timeSelection}
       );
 
       // const dateRangeProfileData = await axios.post(
-      //   "http://localhost:5000/monthly_demand_profile",
+      //   "http://54.175.34.126:8000/monthly_demand_profile",
       //   { selectedMonth, checkboxes }
       // );
       setDateRangeProfileData(JSON.parse(dateRangeProfileData.data));
       const plotData = await axios.get(
-        "http://localhost:5000/get_demand_plot_data"
+        "http://54.175.34.126:8000/get_demand_plot_data"
       );
       setPlotData(covertData(plotData.data));
       setLoaded(true);
@@ -140,18 +140,18 @@ export default function Charts_handling({ selectionUpdated, selectedOption }) {
   }, [selectionUpdated]);
   const handleUpdate = async () => {
     const profileData = await axios.post(
-      "http://localhost:5000/monthly_demand_profile",
+      "http://54.175.34.126:8000/monthly_demand_profile",
       { selectedMonth, checkboxes }
     );
     setProfileData(JSON.parse(profileData.data));
   };
   const handleUpdateDateRangeProfileData = async () => {
     const dateRangeProfileData = await axios.post(
-      "http://localhost:5000/date_filter",
+      "http://54.175.34.126:8000/date_filter",
       { timeSelection}
     );
     // const dateRangeProfileData = await axios.post(
-    //   "http://localhost:5000/monthly_demand_profile",
+    //   "http://54.175.34.126:8000/monthly_demand_profile",
     //   { selectedMonth , checkboxes}
     // );
     setDateRangeProfileData(JSON.parse(dateRangeProfileData.data));

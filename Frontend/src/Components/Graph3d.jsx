@@ -15,7 +15,7 @@ const Graph3d = () => {
     const fetch3dMonthlyData = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:5000/give_comp_3D_monthly_plot"
+          "http://54.175.34.126:8000/give_comp_3D_monthly_plot"
         );
         // console.log("data=>", response.data);
         const month_data = JSON.parse(response.data);
@@ -31,7 +31,7 @@ const Graph3d = () => {
     const fetch3dDailyData = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:5000/give_comp_3D_daily_plot"
+          "http://54.175.34.126:8000/give_comp_3D_daily_plot"
         );
         // console.log("data=>", response.data);
         const daily_data = JSON.parse(response.data);

@@ -56,12 +56,12 @@ export default function NumbersData({ selectionUpdated, setBessCost }) {
   const handleFetch = async () => {
     try {
       let response = await axios.post(
-        "http://localhost:5000/bess_calculation",
+        "http://54.175.34.126:8000/bess_calculation",
         { inputs: { ...inputs, bessCapacity: +inputs.bessCapacity } }
       );
       //  const bess_cost_rec = response.data.BESS_cost;
       setBessCostRec(response.data.BESS_capacity_rec);
-      response = await axios.post("http://localhost:5000/bess_calculation", {
+      response = await axios.post("http://54.175.34.126:8000/bess_calculation", {
         inputs: { ...inputs, bessCapacity: response.data.BESS_capacity_rec },
       });
       setBessOut(response.data);
@@ -76,7 +76,7 @@ export default function NumbersData({ selectionUpdated, setBessCost }) {
   const handleSubmit = async () => {
     try {
       let response = await axios.post(
-        "http://localhost:5000/bess_calculation",
+        "http://54.175.34.126:8000/bess_calculation",
         {
           inputs: {
             ...inputs,
@@ -153,7 +153,7 @@ export default function NumbersData({ selectionUpdated, setBessCost }) {
                       onChange={(e) => {
                         setInputs({
                           ...inputs,
-                          [val.accessor]: e.target.value,
+                          [val.accessor]: +e.target.value,
                         });
                       }}
                       value={inputs[val.accessor]}
@@ -308,7 +308,7 @@ export default function NumbersData({ selectionUpdated, setBessCost }) {
             </div>
             <div className="flex items-start justify-start overflow-hidden flex-col w-full shrink-0">
               <label className=" text-[1.1rem] items-center   flex text-slate-400">
-                {"BESS O&M Cost ($/"}
+                {"BESS Capacity ("}
                 <select
                   value={recSelected}
                   onChange={(e) => {
@@ -316,8 +316,8 @@ export default function NumbersData({ selectionUpdated, setBessCost }) {
                   }}
                   className=" outline-none text-center bg-transparent mx-[.3rem] rounded-md border-[0.1rem] border-slate-300"
                 >
-                  <option value={true}>recommended</option>
-                  <option value={false}>custom</option>
+                  <option value={true}>Recommended</option>
+                  <option value={false}>Custom</option>
                 </select>
                 {")"}
               </label>
