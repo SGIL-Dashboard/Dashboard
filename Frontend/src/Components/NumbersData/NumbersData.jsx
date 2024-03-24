@@ -16,7 +16,7 @@ export default function NumbersData({ selectionUpdated, setBessCost }) {
     floatInput3: 24.25,
     floatInput4: 0,
     selectInput: 4,
-    depthDischarge: 15,
+    depthDischarge: 85,
     footprint: 37,
     bessCapacity: 500,
   });
@@ -56,12 +56,12 @@ export default function NumbersData({ selectionUpdated, setBessCost }) {
   const handleFetch = async () => {
     try {
       let response = await axios.post(
-        "http://54.175.34.126:8000/bess_calculation",
+        "http://127.0.0.1:5000/bess_calculation",
         { inputs: { ...inputs, bessCapacity: +inputs.bessCapacity } }
       );
       //  const bess_cost_rec = response.data.BESS_cost;
       setBessCostRec(response.data.BESS_capacity_rec);
-      response = await axios.post("http://54.175.34.126:8000/bess_calculation", {
+      response = await axios.post("http://127.0.0.1:5000/bess_calculation", {
         inputs: { ...inputs, bessCapacity: response.data.BESS_capacity_rec },
       });
       setBessOut(response.data);
@@ -76,7 +76,7 @@ export default function NumbersData({ selectionUpdated, setBessCost }) {
   const handleSubmit = async () => {
     try {
       let response = await axios.post(
-        "http://54.175.34.126:8000/bess_calculation",
+        "http://127.0.0.1:5000/bess_calculation",
         {
           inputs: {
             ...inputs,

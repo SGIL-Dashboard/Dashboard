@@ -6,16 +6,17 @@ import RenderForm from "./RenderForm";
 import SVGComponent from "../SVGS/SVGS";
 import { makeApiRequest } from "../../UTILS/UTILS_HELPERS";
 import toast from "react-hot-toast";
+import Results from "./Results";
 export default function FinancialAnalysis({ bessCost }) {
   const { theme } = React.useContext(globalContext);
   const errorsInitialState = {
     projectDebt : {
-      debtAmount : {},
+      debtAmount : false,
       loanTerm : false,
       loanRate : false
     },
     reserveAccounts : {
-      reserveAmount : {},
+      reserveAmount : false,
       interestRate : false
     
     },
@@ -27,13 +28,13 @@ export default function FinancialAnalysis({ bessCost }) {
     },
     initialInvestment : 
     {
+      project_length : false,
       bessCost : false,
-      differential : {},
+      differential : false,
       totalInitialInvestment : false
     },
     investmentTaxCredit : {
-      fedral : {},
-      state : {}
+      fedral : false,
     
     },
     taxes : {
@@ -45,25 +46,52 @@ export default function FinancialAnalysis({ bessCost }) {
       AssedssedValue : false,
     },
     capacityPayments : {
-      commitmentAmount : {},
-      commitmentPayment : {}
+      commitmentAmount : false,
+      commitmentPayment : false
     }
  }
+ const [results , setResults] = React.useState({npv : 100000 , irr : 14 , payback_period : 4 , lcoe : 0.15 , itc : 145125 , bill_savings_yr1 : 29825 ,  dr_rev_yr1 : 34850});
+ const renderResultsHelper = [
+  {
+    label : "NPV" , accessor : "npv"
+  },
+  {
+    label : "Demand Response Revenue" , accessor : "dr_rev_yr1"
+  },
+  {
+    label : "IRR" , accessor : "irr"
+  },
+  {
+    label : "Payback" , accessor : "payback_period"
+  },
+  {
+    label : "ITC" , accessor : "itc"
+  },
+  {
+    label : "1 year bill savings" , accessor : "bill_savings_yr1"
+  },
+  {
+    label : "LCOE" , accessor : "lcoe"
+  },
+
+ ]
+ const formRenderingOrder = ["initialInvestment" ,  "taxes" , "utilityBill" , "reserveAccounts" , "investmentTaxCredit" , "capacityPayments" , "projectDebt"]
   const [errors , setErrors] = React.useState(JSON.parse(JSON.stringify(errorsInitialState)));
   const [state, setState] = React.useState({
     differential: "",
     projectDebt: {
-      debtAmount: { "%": 40, $: 50, selectedMeasureUnit: "%" },
+      debtAmount: { value : 30 , selectedMeasureUnit: "%" },
       loanTerm: 18,
       loanRate: 5,
     },
     initialInvestment : {
+      project_length : {value : 20 , selectedMeasureUnit : "years"},
       bessCost : bessCost,
-      differential : {"%" : 50 , "$" : "1300" , selectedMeasureUnit : "$"},
+      differential : {value : 30 , selectedMeasureUnit : "$"},
       totalInitialInvestment : bessCost + 1300
     },
     reserveAccounts : {
-      reserveAmount : {"%" : 10 , "$" : 110 , selectedMeasureUnit : "%"},
+      reserveAmount : {value : 30 , selectedMeasureUnit : "%"},
       interestRate : 1.5
     },
     utilityBill : {
@@ -73,15 +101,9 @@ export default function FinancialAnalysis({ bessCost }) {
     },
     investmentTaxCredit : {
       fedral : {
-        "%" : 30,
-        "$" : 100,
+       value : 30,
         selectedMeasureUnit : "%"
       },
-      state : {
-        "%" : 0,
-        "$" : 50,
-        selectedMeasureUnit : "%"
-      }
     },
     taxes : {
       fedralIncomeTax : 21,
@@ -93,8 +115,8 @@ export default function FinancialAnalysis({ bessCost }) {
       AssedssedPercent : 100,
     },
     capacityPayments : {
-      commitmentAmount : {"%" : 40 , "kW" : 100 , selectedMeasureUnit : "%"},
-      commitmentPayment : {"kW" : 40 , "$" : 100 , selectedMeasureUnit : "kW"},
+      commitmentAmount : {value : 30 , selectedMeasureUnit : "%"},
+      commitmentPayment : {value : 30 , selectedMeasureUnit : "kW"},
     }
   });
   React.useEffect(()=>
@@ -120,6 +142,11 @@ export default function FinancialAnalysis({ bessCost }) {
         label : "Total Initial Investment",
         accessor : "initialInvestment",
         fields : [
+          {
+            label : "project length",
+            accessor : "project_length",
+            multipleMeasureUnits : ["days" , "years"],
+          },
           {
             label : "BESS Cost",
             accessor : "bessCost",
@@ -178,11 +205,6 @@ export default function FinancialAnalysis({ bessCost }) {
               accessor : "fedral",
               multipleMeasureUnits : ["%" , "$"]
             },
-            {
-              label : "State",
-              accessor : "state",
-              multipleMeasureUnits : ["%" , "$"]
-            }
           ]
         },
         taxes : {
@@ -274,10 +296,10 @@ export default function FinancialAnalysis({ bessCost }) {
         const value = currentState[feild.accessor];
         if(typeof value === "object")
         {
-          if(value[value.selectedMeasureUnit] === "")
+          if(value.value === "")
           {
             foundError = true;
-            errors = {...errors , [val] : {...errors[val] , haveError : true , [feild.accessor] : {[value.selectedMeasureUnit] : true}}}
+            errors = {...errors , [val] : {...errors[val] , haveError : true , [feild.accessor] : true}}
           }
         }
         else
@@ -316,35 +338,8 @@ export default function FinancialAnalysis({ bessCost }) {
           <span className=" w-full text-center text-[2rem] text-slate-400 font-bold pt-[1.5rem]">
             Financial Analysis
           </span>
-          <div className="w-full h-fit shrink-0 flex items-center justify-evenly">
-            <div className="flex flex-col items-center">
-              <span className="text-[1rem] text-slate-400">BESS COST</span>
-              <span className=" text-[2rem] font-bold text-blue-900">
-                ${bessCost}
-              </span>
-            </div>
-            <span className="text-[4rem] font-bold text-slate-400">+</span>
-            <div className="flex flex-col items-start">
-              <label htmlFor="" className="text-[1.1rem] text-slate-400">
-                Differential in{" "}
-              </label>
-              <input
-                type="number"
-                className="outline-none ULInput bg-transparent  text-[1.5rem] shrink-0 border-b-[0.15rem] duration-300 ease-in-out border-blue-900"
-              />
-            </div>
-            <span className="text-[4rem] font-bold text-slate-400">=</span>
-            <div className="flex flex-col items-center">
-              <span className="text-[1rem] text-slate-400">
-                Total Initial Investment
-              </span>
-              <span className=" text-[2rem] font-bold text-blue-900">
-                ${bessCost}
-              </span>
-            </div>
-          </div>
-          <div className=" w-full mt-[4rem] h-fit flex items-start justify-evenly">
-            <div className=" w-[25%] shrink-0 flex flex-col items-center">
+          <div className=" w-full flex items-center justify-center">
+          <div className=" w-[25%] ml-[2rem] shrink-0 flex flex-col items-center">
               <span className=" text-[1.3rem] w-full bg-slate-100 py-[.5rem] text-slate-400 font-semibold">Select Parameters</span>
               {parameters.map((val)=>
               {
@@ -361,12 +356,20 @@ export default function FinancialAnalysis({ bessCost }) {
                   handleSubmit();
                 }} className=" w-full h-[3rem] flex items-center justify-center shrink-0 mt-[2rem] text-[1.4rem] text-blue-900 border-[0.1rem] border-blue-900 rounded-full">Calculate</button>                       
             </div>
-            <div className=" w-[65%] gap-[1rem] flex flex-wrap items-start justify-start">
-              {selectedParameters.map((val)=>
+          <Results results={results} renderResultsHelper={renderResultsHelper}/>
+
+          </div>
+          <div className=" w-full mt-[4rem] h-fit flex items-start justify-evenly">
+            
+            {selectedParameters.length > 0 ? <div className=" w-[100%] gap-[2rem] flex flex-wrap  justify-center">
+              {formRenderingOrder.map((val , ids)=>
               {
-                return<RenderForm errors={errors[val]} formHelper={formHelpers[val]} state={state} setState={setState}/>
+                return selectedParameters.includes(val) ? <RenderForm errors={errors[val]} val={val} key={ids} formHelper={formHelpers[val]} state={state} setState={setState}/> : <></>
               })}
-            </div>
+            </div> : <div className=" w-full flex flex-col items-center justify-center">
+              <SVGComponent selector="select" width="w-[5rem]" color="#94A3B8"/>
+              <span className=" text-[1.5rem] text-slate-400 font-semibold">Please Select a Parameter To Customize</span>
+              </div>}
           </div>
         </>
       )}

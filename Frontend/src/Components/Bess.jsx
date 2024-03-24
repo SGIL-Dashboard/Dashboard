@@ -44,7 +44,7 @@ const Bess = () => {
     setBessOut({});
     try {
       const response = await axios.post(
-        "http://54.175.34.126:8000/bess_calculation",
+        "http://127.0.0.1:5000/bess_calculation",
         { inputs }
       );
       // console.log(response.data);
@@ -71,7 +71,7 @@ const Bess = () => {
     const fetch3dMonthlyData = async () => {
       try {
           const response = await axios.get(
-            "http://54.175.34.126:8000/give_comp_3D_monthly_plot"
+            "http://127.0.0.1:5000/give_comp_3D_monthly_plot"
           );
         // console.log("data=>", response.data);
         const month_data = JSON.parse(response.data);
@@ -87,7 +87,7 @@ const Bess = () => {
     const fetch3dDailyData = async () => {
       try {
         const response = await axios.get(
-          "http://54.175.34.126:8000/give_comp_3D_daily_plot"
+          "http://127.0.0.1:5000/give_comp_3D_daily_plot"
         );
         // console.log("data=>", response.data);
         const daily_data = JSON.parse(response.data);

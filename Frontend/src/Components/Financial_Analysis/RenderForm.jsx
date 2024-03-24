@@ -2,17 +2,17 @@ import React from "react";
 import { stylings } from "../../UTILS/UTILS_STYLES";
 import { globalContext } from "../../Context/Context";
 import {insertCommas} from "../../UTILS/UTILS_HELPERS";
-export default function RenderForm({ formHelper, state, setState, errors }) {
+export default function RenderForm({ formHelper, state, setState, errors  , val}) {
   console.log({ formHelper, errors });
   const { theme } = React.useContext(globalContext);
   const fieldsLen = formHelper.fields.length;
   const parentStylings = errors.haveError
     ? fieldsLen > 4
-      ? "w-[48%] flex justify-between flex-wrap p-[1rem] py-[1.5rem] border-[0.15rem] border-red-500 rounded-lg relative items-center"
-      : "w-[48%] flex flex-col p-[1rem] py-[1.5rem] border-[0.15rem] border-red-500 rounded-lg relative items-center"
+      ? "w-[30%] flex justify-between flex-wrap p-[1rem] py-[1.5rem] border-[0.15rem] border-red-500 rounded-lg relative items-center"
+      : "w-[30%] flex flex-col p-[1rem] py-[1.5rem] border-[0.15rem] border-red-500 rounded-lg relative items-center justify-evenly"
     : fieldsLen > 4
-    ? "w-[48%] flex  justify-between flex-wrap p-[1rem] py-[1.5rem] border-[0.15rem] border-slate-400 rounded-lg relative items-center"
-    : "w-[48%] flex flex-col p-[1rem] py-[1.5rem] border-[0.15rem] border-slate-400 rounded-lg relative items-center";
+    ? "w-[30%] flex  justify-between flex-wrap p-[1rem] py-[1.5rem] border-[0.15rem] border-slate-400 rounded-lg relative items-center"
+    : "w-[30%] flex flex-col p-[1rem] py-[1.5rem] border-[0.15rem] border-slate-400 rounded-lg relative items-center justify-evenly";
   return (
     <form
       onSubmit={(e) => {
@@ -42,12 +42,13 @@ export default function RenderForm({ formHelper, state, setState, errors }) {
                 {"("}
                 <select
                   onChange={(e) => {
-                    if(formHelper.accessor === "initialInvestment")
+                    console.log({val})
+                    if(formHelper.accessor === "initialInvestment" && val.accessor === "differential")
                     {
                       if(e.target.value === "%")
                       {
                         const bessCost = +state.initialInvestment.bessCost;
-                        const percent = +state.initialInvestment.differential["%"];
+                        const percent = +state.initialInvestment.differential.value;
                         const result = bessCost + (percent / 100) * bessCost;
                         setState({
                           ...state,
@@ -63,7 +64,7 @@ export default function RenderForm({ formHelper, state, setState, errors }) {
                       }
                       else{
                         const bessCost = +state.initialInvestment.bessCost;
-                        const dollars  = +state.initialInvestment.differential["$"];
+                        const dollars  = +state.initialInvestment.differential.value;
                         const result = bessCost + dollars; 
                         setState({
                           ...state,
@@ -102,18 +103,14 @@ export default function RenderForm({ formHelper, state, setState, errors }) {
                 {")"}
               </label>
               <div
-                style={{
-                  transform: !(val.multipleMeasureUnits[0] === selectedVal)
-                    ? "translateX(-50%)"
-                    : "",
-                }}
-                className=" w-[200%] duration-300 ease-in-out shrink-0 flex items-center justify-start"
+                className=" w-[100%] duration-300 ease-in-out shrink-0 flex items-center justify-start"
               >
                 <input
                   onChange={(e) => {
-                    if(formHelper.accessor === "initialInvestment")
+                    if(formHelper.accessor === "initialInvestment" && val.accessor === "differential")
                     {
-                      if(val.multipleMeasureUnits[0] === "%")
+                      console.log({measureUnit : state[formHelper.accessor][val.accessor].selectedMeasureUnit , val })
+                      if(state[formHelper.accessor][val.accessor].selectedMeasureUnit === "%")
                       {
                         const bessCost = state.initialInvestment.bessCost;
                         const percent = +e.target.value;
@@ -124,7 +121,7 @@ export default function RenderForm({ formHelper, state, setState, errors }) {
                             ...state[formHelper.accessor],
                             [val.accessor]: {
                               ...state[formHelper.accessor][val.accessor],
-                              [val.multipleMeasureUnits[0]]: percent,
+                              value: +percent,
                             },
                             totalInitialInvestment : result,
                           },
@@ -140,7 +137,7 @@ export default function RenderForm({ formHelper, state, setState, errors }) {
                             ...state[formHelper.accessor],
                             [val.accessor]: {
                               ...state[formHelper.accessor][val.accessor],
-                              [val.multipleMeasureUnits[0]]: e.target.value,
+                              value: +e.target.value,
                             },
                             totalInitialInvestment : result,
                           },
@@ -155,82 +152,20 @@ export default function RenderForm({ formHelper, state, setState, errors }) {
                         ...state[formHelper.accessor],
                         [val.accessor]: {
                           ...state[formHelper.accessor][val.accessor],
-                          [val.multipleMeasureUnits[0]]: e.target.value,
+                         value: +e.target.value,
                         },
                       },
                     });
                   }}
                   type="number"
-                  style={{ width: "50%" }}
+                  style={{ width: "100%" }}
                   className={
-                    errors[val.accessor][val.multipleMeasureUnits[0]]
+                    errors[val.accessor]
                       ? `${stylings[theme].calculation.floatInput} border-red-500`
                       : stylings[theme].calculation.floatInput
                   }
                   value={
-                    state[formHelper.accessor][val.accessor][
-                      val.multipleMeasureUnits[0]
-                    ]
-                  }
-                />
-                <input
-                  onChange={(e) => {
-                    if(formHelper.accessor === "initialInvestment")
-                    {
-                      if(val.multipleMeasureUnits[1] === "%")
-                      {
-                        const bessCost = state.initialInvestment.bessCost;
-                        const percent = +e.target.value;
-                        const result = bessCost + (percent / 100) * bessCost;
-                        setState({
-                          ...state,
-                          [formHelper.accessor]: {
-                            ...state[formHelper.accessor],
-                            [val.accessor]: {
-                              ...state[formHelper.accessor][val.accessor],
-                              [val.multipleMeasureUnits[1]]: percent,
-                            },
-                            totalInitialInvestment : result,
-                          },
-                        });
-                      }
-                      else{
-                        const bessCost = state.initialInvestment.bessCost;
-                        const dollars  = +e.target.value;
-                        const result = bessCost + dollars; 
-                        setState({
-                          ...state,
-                          [formHelper.accessor]: {
-                            ...state[formHelper.accessor],
-                            [val.accessor]: {
-                              ...state[formHelper.accessor][val.accessor],
-                              [val.multipleMeasureUnits[1]]: dollars,
-                            },
-                            totalInitialInvestment : result,
-                          },
-                        });
-                      }
-                      return;
-                    }
-                    else if (val.readOnly) return;
-                    setState({
-                      ...state,
-                      [formHelper.accessor]: {
-                        ...state[formHelper.accessor],
-                        [val.accessor]: {
-                          ...state[formHelper.accessor][val.accessor],
-                          [val.multipleMeasureUnits[1]]: e.target.value,
-                        },
-                      },
-                    });
-                  }}
-                  type="number"
-                  style={{ width: "50%" }}
-                  className={stylings[theme].calculation.floatInput}
-                  value={
-                    state[formHelper.accessor][val.accessor][
-                      val.multipleMeasureUnits[1]
-                    ]
+                    state[formHelper.accessor][val.accessor].value
                   }
                 />
               </div></>
