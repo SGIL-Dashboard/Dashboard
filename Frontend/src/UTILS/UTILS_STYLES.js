@@ -27,7 +27,7 @@ export const stylings = {
       }
      },
      calculation : {
-      parent : "w-full h-fit shrink-0 flex border-b-[0.1rem] border-slate-200 justify-evenly py-[4rem]",
+      parent : "w-full h-fit shrink-0 flex border-b-[0.1rem] border-slate-200 justify-evenly py-[4rem] changebg",
       subParent : "w-[60%] border-r-[0.1rem] border-slate-200 px-[3rem] h-fit flex-col justify-between flex",
       rangeParent : "flex items-start justify-start flex-col",
       rangeInput : "styledRange w-full",
@@ -36,7 +36,7 @@ export const stylings = {
       value : "text-[1.9rem] text-blue-900 font-bold"
      },
      chartSelection : {
-      parent : " w-full flex items-start justify-between border-b-[0.15rem] border-slate-200",
+      parent : " w-full flex items-start justify-between border-b-[0.15rem] border-slate-200 changebg",
       chartSelectorContainer : {
        parent : "bg-slate-100 w-[30%] flex flex-col items-center justify-center ml-[.7rem] mt-[.7rem] pt-[.7rem]",
        button : {selected : "bg-gradient-to-l from-blue-200 to-blue-100 w-full py-[1.2rem] border-b-[0.1rem] border-blue-900 pl-[.7rem] flex items-center justify-start" , notSelected : "hover:bg-gradient-to-l from-transparent to-blue-200 w-full py-[1.2rem] border-b-[0.1rem] border-blue-900 pl-[.7rem] flex items-center justify-start"},

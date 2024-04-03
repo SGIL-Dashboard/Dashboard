@@ -8,7 +8,7 @@ import { stylings } from "../../UTILS/UTILS_STYLES";
 import { globalContext } from "../../Context/Context";
 import { useContext } from "react";
 import { insertCommas } from "../../UTILS/UTILS_HELPERS";
-export default function NumbersData({ selectionUpdated, setBessCost }) {
+export default function NumbersData({ selectionUpdated, setBessCost , setBessPower }) {
   const { theme } = useContext(globalContext);
   const [inputs, setInputs] = React.useState({
     floatInput1: 967.5,
@@ -39,7 +39,7 @@ export default function NumbersData({ selectionUpdated, setBessCost }) {
         accessor: "footprint",
         max: 100,
       },
-      { label: "Battery Duration", accessor: "selectInput", max: 4 },
+      { label: "BESS Duration", accessor: "selectInput", max: 4 },
     ],
     floatInputs: [
       { label: "BESS Capital Cost ($/kWh)", accessor: "floatInput1" },
@@ -48,7 +48,7 @@ export default function NumbersData({ selectionUpdated, setBessCost }) {
     ],
   };
   const valuesRenderHelpers = [
-    { label: "EST BESS Capacity (kWh)", accessor: "BESS_capacity" },
+    { label: "Est. BESS Capacity (kWh)", accessor: "BESS_capacity" },
     { label: "BESS Power (kW)", accessor: "BESS_power" },
     { label: "BESS Footprint (ftSUP{2})", accessor: "BESS_footprint" },
     { label: "BESS Cost", accessor: "BESS_cost" },
@@ -66,6 +66,7 @@ export default function NumbersData({ selectionUpdated, setBessCost }) {
       });
       setBessOut(response.data);
       setBessCost(response.data.BESS_cost);
+      setBessPower(response.data.BESS_power);
       setUnderProcess(false);
       setNumberLoaded(true);
     } catch (error) {
@@ -87,6 +88,7 @@ export default function NumbersData({ selectionUpdated, setBessCost }) {
       //  const bess_cost_rec = response.data.BESS_cost;
       setBessOut(response.data);
       setBessCost(response.data.BESS_cost);
+      setBessPower(response.data.BESS_power);
       setUnderProcess(false);
       setNumberLoaded(true);
     } catch (error) {

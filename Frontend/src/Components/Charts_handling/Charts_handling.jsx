@@ -19,11 +19,12 @@ export default function Charts_handling({ selectionUpdated, selectedOption }) {
   const [loaded, setLoaded] = React.useState(false);
 
   const charts = [
-    `January Load Profile: ${selectedBuilding}`,
-    `Date Range Laod Profile: ${selectedBuilding}`,
+    `Monthly Load Profile: ${selectedBuilding}`,
+    `Date Range Load Profile: ${selectedBuilding}`,
     `Monthly Peak and Average Demand: ${selectedBuilding}`,
     `Load Profile for ${selectedBuilding}: Monthly Variation`,
     `Load Profile for ${selectedBuilding}: Daily Variation`,
+    `Forecasted Load Profile for ${selectedBuilding}`,
   ];
   const [month3Data, setMonth3Data] = React.useState({});
   const [profileData, setProfileData] = React.useState({});
@@ -181,7 +182,7 @@ export default function Charts_handling({ selectionUpdated, selectedOption }) {
         }
       : {};
   const chartsParentStylings =
-    "relative w-full h-[20%] shrink-0 flex flex-col items-center justify-center";
+    "relative w-full h-[41rem] shrink-0 flex flex-col items-center justify-center";
   return (
     <div className={stylings[theme].chartSelection.parent}>
       <div
@@ -222,11 +223,11 @@ export default function Charts_handling({ selectionUpdated, selectedOption }) {
         {loaded ? (
           <div
             style={{ transform: `translateY(${-selected * 41}rem)` }}
-            className=" w-full ease-in-out duration-500 h-[500%] shrink-0 flex flex-col items-center"
+            className=" w-full ease-in-out duration-500 h-[600%] shrink-0 flex flex-col items-center"
           >
             <div className={`MonthlyChart ${chartsParentStylings}`}>
               <div className="w-full h-full flex flex-col items-center justify-center gap-[1rem]">
-                <SVGComponent selector="clock" width="w-[4rem]" color="grey" />
+                <SVGComponent selector="clock" width="w-[4rem]" color="grey"/>
                 <span className="text-[1.4rem] text-slate-500 font-semibold">
                   Getting Your Chart Ready Please Wait
                 </span>
@@ -449,6 +450,85 @@ export default function Charts_handling({ selectionUpdated, selectedOption }) {
                       },
                     }}
                   />
+                </div>
+              )}
+            </div>
+            <div className={`MonthlyChart ${chartsParentStylings}`}>
+              <div className="w-full h-full flex flex-col items-center justify-center gap-[1rem]">
+                <SVGComponent selector="clock" width="w-[4rem]" color="grey" />
+                <span className="text-[1.4rem] text-slate-500 font-semibold">
+                  Getting Your Chart Ready Please Wait
+                </span>
+              </div>
+              {dateRangeProfileData?.data && (
+                <div className=" w-full pt-[1rem] h-full absolute top-0 left-0 flex flex-col items-center justify-start z-[1]">
+                  <PlotlyComponent
+                    data={profileData.data}
+                    layout={{
+                      ...profileData.layout,
+                      height: 500,
+                      width: 790,
+                      title : {text : `Forecasted Load Profile For ${selectedBuilding}`},
+                      ...darkThemeChartStylings,
+                    }}
+                  />
+                  <div className=" flex-grow flex h-fit items-center justify-center w-full">
+                    <div className=" flex w-full justify-center gap-[2rem]">
+                    <TimeTaker
+                      label={"From"}
+                      current="from"
+                      comparision="to"
+                      lessThan={true}
+                      timeSelection={timeSelection}
+                      setTimeSelection={setTimeSelection}
+                    />
+                    <TimeTaker
+                      label={"To"}
+                      current="to"
+                      comparision="from"
+                      lessThan={false}
+                      timeSelection={timeSelection}
+                      setTimeSelection={setTimeSelection}
+                    />
+                    <div className="div relative w-[25%] py-[1rem] rounded-xl justify-center shrink-0 flex flex-col border-[0.15rem] items-center border-slate-400">
+                    <span className=' text-[1.1rem] bg-white absolute px-[.5rem] top-[-0.9rem] left-[1rem]  flex text-slate-400 '>Markings</span>
+                    <div className=" flex flex-col items-start">
+                    {formHelpers.map((val, id) => {
+                        return (
+                          <div
+                            key={id}
+                            className=" flex items-center gap-[.5rem]"
+                          >
+                            <input
+                              checked={checkboxes[val.accessor]}
+                              onChange={(e) => {
+                                setCheckboxes({
+                                  ...checkboxes,
+                                  [val.accessor]: e.target.checked,
+                                });
+                              }}
+                              id={val.accessor}
+                              type="checkbox"
+                              className=" w-[1.3rem] h-[1.3rem]"
+                            />
+                            <label
+                              className={
+                                stylings[theme].chartSelection
+                                  .chartSelectorContainer.form.label
+                              }
+                              htmlFor={val.accessor}
+                            >
+                              {val.label}
+                            </label>
+                          </div>
+                        );
+                      })}
+                    </div>
+                    </div>
+                    </div>
+                    
+                    
+                  </div>
                 </div>
               )}
             </div>

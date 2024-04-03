@@ -2,25 +2,142 @@ import React from "react";
 import { stylings } from "../../UTILS/UTILS_STYLES";
 import { globalContext } from "../../Context/Context";
 import {insertCommas} from "../../UTILS/UTILS_HELPERS";
-export default function RenderForm({ formHelper, state, setState, errors  , val}) {
+export default function RenderForm({ formHelper, state, setState, errors  , val , bessPower}) {
   console.log({ formHelper, errors });
   const { theme } = React.useContext(globalContext);
-  const fieldsLen = formHelper.fields.length;
-  const parentStylings = errors.haveError
+  const fieldsLen = formHelper?.fields?.length;
+  const parentStylings = errors?.haveError
     ? fieldsLen > 4
-      ? "w-[30%] flex justify-between flex-wrap p-[1rem] py-[1.5rem] border-[0.15rem] border-red-500 rounded-lg relative items-center"
-      : "w-[30%] flex flex-col p-[1rem] py-[1.5rem] border-[0.15rem] border-red-500 rounded-lg relative items-center justify-evenly"
+      ? "w-[30%] flex mt-[1rem] justify-between flex-wrap p-[1rem] py-[1.5rem] border-[0.15rem] border-red-500 rounded-lg relative items-center"
+      : "w-[30%] flex mt-[1rem] flex-col p-[1rem] py-[1.5rem] border-[0.15rem] border-red-500 rounded-lg relative items-center justify-evenly"
     : fieldsLen > 4
-    ? "w-[30%] flex  justify-between flex-wrap p-[1rem] py-[1.5rem] border-[0.15rem] border-slate-400 rounded-lg relative items-center"
-    : "w-[30%] flex flex-col p-[1rem] py-[1.5rem] border-[0.15rem] border-slate-400 rounded-lg relative items-center justify-evenly";
-  return (
-    <form
+    ? "w-[30%] flex mt-[1rem]  justify-between flex-wrap p-[1rem] py-[1.5rem] border-[0.15rem] border-slate-400 rounded-lg relative items-center"
+    : "w-[30%] flex mt-[1rem] flex-col p-[1rem] py-[1.5rem] border-[0.15rem] border-slate-400 rounded-lg relative items-center justify-evenly";
+  return <>
+  {val === "demandResponse" ? <form className=" w-[30%] mt-[1rem] p-[1rem] border-[0.15rem] rounded-lg relative flex flex-col items-center justify-center">
+  <div className=" w-full justify-between flex pt-[1rem] items-center">
+        <span className=" absolute top-[-1rem] bg-white text-slate-400 text=[1.1rem] left-[1rem] px-[.5rem]">Demand Response</span>
+        <span className=" flex-1 text-start text-slate-400  text-[0.9rem]">Months</span>
+        <span className=" flex-1 text-[0.9rem] text-slate-400 flex flex-col "><span>Commitment</span> <span>Amount {"("}<select className=" text-center outline-none" onChange={(e)=>
+          {
+            const demandResponse = state.demandResponse.inputs;
+            const value = e.target.value;
+            if(value === "%")
+            {
+              Object.keys(demandResponse).map((val)=>
+              {
+                const commitmentPayment = demandResponse[val].CommitmentPayment;
+                const commitmentAmount = demandResponse[val].CommitmentAmount;
+                const total = ((commitmentAmount / 100) * bessPower) * commitmentPayment;
+                demandResponse[val].totalDrPayment = total;
+              })
+            }
+            else
+            {
+              Object.keys(demandResponse).map((val)=>
+              {
+                const commitmentPayment = demandResponse[val].CommitmentPayment;
+                const commitmentAmount = demandResponse[val].CommitmentAmount;
+                const total = commitmentAmount * commitmentPayment;
+                demandResponse[val].totalDrPayment = total;
+              })
+            }
+            setState({
+              ...state,
+              demandResponse: {
+                inputs : {...demandResponse},
+                selectedCommetmentAmount: e.target.value,
+              },
+            })
+          }} value={state.demandResponse.selectedCommetmentAmount}>
+          <option value="kW">kW</option>
+          <option value="%">%</option>
+          </select>{")"}</span></span>
+        <span className=" flex-1 text-[0.9rem] text-slate-400">Commitment Payment</span>
+        <span className=" flex-1 text-[0.9rem] text-slate-400">Total DR Payment ($)</span>
+      </div>
+    {formHelper.fields.map((val) => 
+    {
+      return <div className=" w-full justify-between flex items-center">
+        <span className=" absolute top-[-1rem] bg-white text-slate-400 text=[1.1rem] left-[1rem] px-[.5rem]">Demand Response</span>
+        <span className=" flex-1 font-semibold text-start text-blue-900 text-[1.2rem]">{val.label}</span>
+        <input type="text" className=" ULInput w-[25%] shrink-0 text-center outline-none" onChange={(e)=>
+          {
+            const value = +e.target.value;
+            if(`${value}` === "NaN")
+            {
+              return
+            }
+
+            const commitmentPayment = state[formHelper.accessor].inputs[val.accessor].CommitmentPayment;
+            const selection = state.demandResponse.selectedCommetmentAmount;
+            let total = 0;
+            if(selection === "%")
+            {
+              total =  ((value / 100) * bessPower) * commitmentPayment;
+            }
+            else
+            {
+              total = (value * commitmentPayment);
+            }
+            
+            setState({
+              ...state,
+              [formHelper.accessor]: {
+                ...state[formHelper.accessor],
+                inputs: {
+                  ...state[formHelper.accessor].inputs,
+                  [val.accessor]: {
+                    ...state[formHelper.accessor].inputs[val.accessor],
+                    CommitmentAmount : +e.target.value,
+                    totalDrPayment : total
+                  }
+                }
+              }
+            })
+          }} value={state[formHelper.accessor].inputs[val.accessor].CommitmentAmount}/>
+        <input type="text" className=" ULInput w-[25%] shrink-0 text-center outline-none" onChange={(e)=>
+          {
+            const value = +e.target.value;
+            if(`${value}` === "NaN") return
+            const commitmentAmount = +state[formHelper.accessor].inputs[val.accessor].CommitmentAmount;
+            const selection = state.demandResponse.selectedCommetmentAmount;
+            let total = 0;
+            if(selection === "%")
+            {
+              total =  ((commitmentAmount / 100) * bessPower) * value;
+            }
+            else
+            {
+              total = (commitmentAmount * value);
+            }
+
+            setState({
+              ...state,
+              [formHelper.accessor]: {
+                ...state[formHelper.accessor],
+                inputs: {
+                  ...state[formHelper.accessor].inputs,
+                  [val.accessor]: {
+                    ...state[formHelper.accessor].inputs[val.accessor],
+                    CommitmentPayment : +e.target.value,
+                    totalDrPayment : +total
+                  }
+                }
+              }
+            })
+          }} value={state[formHelper.accessor].inputs[val.accessor].CommitmentPayment}/>
+       <span className="flex-1">{state[formHelper.accessor].inputs[val.accessor].totalDrPayment}</span>
+        {/* <span className=" flex-1">{state[formHelper.accessor].inputs[val.accessor].CommitmentPayment}</span> */}
+      </div>
+    })}
+  </form> :<form
       onSubmit={(e) => {
         e.preventDefault();
       }}
       className={parentStylings}
     >
-      <span className=" text-[1.1rem] bg-white items-center absolute px-[.5rem] top-[-0.9rem] left-[1rem]  flex text-slate-400 ">
+      <span className=" text-[1.3rem] bg-white items-center absolute px-[.5rem] top-[-1.2rem] left-[50%] translate-x-[-50%]  flex text-slate-400">
         {formHelper.label}
       </span>
       {formHelper.fields.map((val) => {
@@ -209,6 +326,7 @@ export default function RenderForm({ formHelper, state, setState, errors  , val}
           </div>
         );
       })}
-    </form>
-  );
+    </form>}
+  </>
+  ;
 }

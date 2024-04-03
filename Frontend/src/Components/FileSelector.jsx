@@ -29,6 +29,7 @@ const FileSelector = () => {
   const [dfData, setDfData] = useState();
   const [fName , setFName] = useState("");
   const [bessCost , setBessCost] = React.useState("");
+  const [bessPower , setBessPower] = React.useState("");
   const handleDropdownChange = (event) => {
     setSelectedOption(event.target.value);
   };
@@ -252,12 +253,12 @@ const FileSelector = () => {
           </h1>
         )} */}
       </div>
-      <NumbersData selectionUpdated={selectionUpdated} setBessCost={setBessCost}/>
+      <NumbersData selectionUpdated={selectionUpdated} setBessPower = {setBessPower} setBessCost={setBessCost}/>
       <Charts_handling
         selectedOption={selectedOption}
         selectionUpdated={selectionUpdated}
       />
-      <FinancialAnalysis bessCost={bessCost}/>
+      <FinancialAnalysis bessPower = {bessPower} bessCost={bessCost}/>
     </div>
   );
 };
