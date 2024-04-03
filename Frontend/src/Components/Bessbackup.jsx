@@ -41,7 +41,7 @@ const Bess = () => {
     setBessOut({});
     try {
       const response = await axios.post(
-        "http://127.0.0.1:5000/bess_calculation",
+        "https://api.sgillabs.com/bess_calculation",
         { inputs }
       );
       // console.log(response.data);

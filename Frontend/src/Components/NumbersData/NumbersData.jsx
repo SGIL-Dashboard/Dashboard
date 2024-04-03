@@ -56,12 +56,12 @@ export default function NumbersData({ selectionUpdated, setBessCost , setBessPow
   const handleFetch = async () => {
     try {
       let response = await axios.post(
-        "http://127.0.0.1:5000/bess_calculation",
+        "https://api.sgillabs.com/bess_calculation",
         { inputs: { ...inputs, bessCapacity: +inputs.bessCapacity } }
       );
       //  const bess_cost_rec = response.data.BESS_cost;
       setBessCostRec(response.data.BESS_capacity_rec);
-      response = await axios.post("http://127.0.0.1:5000/bess_calculation", {
+      response = await axios.post("https://api.sgillabs.com/bess_calculation", {
         inputs: { ...inputs, bessCapacity: response.data.BESS_capacity_rec },
       });
       setBessOut(response.data);
@@ -77,7 +77,7 @@ export default function NumbersData({ selectionUpdated, setBessCost , setBessPow
   const handleSubmit = async () => {
     try {
       let response = await axios.post(
-        "http://127.0.0.1:5000/bess_calculation",
+        "https://api.sgillabs.com/bess_calculation",
         {
           inputs: {
             ...inputs,

@@ -26,7 +26,7 @@ const DateRangePicker = () => {
     const fetchMonthData = async () => {
       try {
         const response = await axios.post(
-          "http://127.0.0.1:5000/fig_monthly_Demand_data",
+          "https://api.sgillabs.com/fig_monthly_Demand_data",
           { startDate, endDate }
         );
         const month_data = JSON.parse(response.data);

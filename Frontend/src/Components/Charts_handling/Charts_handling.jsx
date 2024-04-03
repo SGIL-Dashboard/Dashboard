@@ -100,30 +100,30 @@ export default function Charts_handling({ selectionUpdated, selectedOption }) {
   const handleFetchData = async () => {
     try {
       const month3Data = await axios.get(
-        "http://127.0.0.1:5000/give_comp_3D_monthly_plot"
+        "https://api.sgillabs.com/give_comp_3D_monthly_plot"
       );
       setMonth3Data(JSON.parse(month3Data.data));
       const daily3Data = await axios.get(
-        "http://127.0.0.1:5000/give_comp_3D_daily_plot"
+        "https://api.sgillabs.com/give_comp_3D_daily_plot"
       );
       setDaily3Data(JSON.parse(daily3Data.data));
       const profileData = await axios.post(
-        "http://127.0.0.1:5000/monthly_demand_profile",
+        "https://api.sgillabs.com/monthly_demand_profile",
         { selectedMonth, checkboxes }
       );
       setProfileData(JSON.parse(profileData.data));
       const dateRangeProfileData = await axios.post(
-        "http://127.0.0.1:5000/date_filter",
+        "https://api.sgillabs.com/date_filter",
         {timeSelection}
       );
 
       // const dateRangeProfileData = await axios.post(
-      //   "http://127.0.0.1:5000/monthly_demand_profile",
+      //   "https://api.sgillabs.com/monthly_demand_profile",
       //   { selectedMonth, checkboxes }
       // );
       setDateRangeProfileData(JSON.parse(dateRangeProfileData.data));
       const plotData = await axios.get(
-        "http://127.0.0.1:5000/get_demand_plot_data"
+        "https://api.sgillabs.com/get_demand_plot_data"
       );
       setPlotData(covertData(plotData.data));
       setLoaded(true);
@@ -141,18 +141,18 @@ export default function Charts_handling({ selectionUpdated, selectedOption }) {
   }, [selectionUpdated]);
   const handleUpdate = async () => {
     const profileData = await axios.post(
-      "http://127.0.0.1:5000/monthly_demand_profile",
+      "https://api.sgillabs.com/monthly_demand_profile",
       { selectedMonth, checkboxes }
     );
     setProfileData(JSON.parse(profileData.data));
   };
   const handleUpdateDateRangeProfileData = async () => {
     const dateRangeProfileData = await axios.post(
-      "http://127.0.0.1:5000/date_filter",
+      "https://api.sgillabs.com/date_filter",
       { timeSelection}
     );
     // const dateRangeProfileData = await axios.post(
-    //   "http://127.0.0.1:5000/monthly_demand_profile",
+    //   "https://api.sgillabs.com/monthly_demand_profile",
     //   { selectedMonth , checkboxes}
     // );
     setDateRangeProfileData(JSON.parse(dateRangeProfileData.data));
