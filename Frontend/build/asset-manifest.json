@@ -1,0 +1,26 @@
+{
+  "files": {
+    "main.css": "/static/css/main.d0742aaa.css",
+    "main.js": "/static/js/main.88b0a8aa.js",
+    "static/js/787.9e9f4ffd.chunk.js": "/static/js/787.9e9f4ffd.chunk.js",
+    "static/media/Administration Building.jpg": "/static/media/Administration Building.d5880f6cebd34a9293fc.jpg",
+    "static/media/Baskerville Hall.jpg": "/static/media/Baskerville Hall.8fd2a1a6230b06bc228c.jpg",
+    "static/media/Wingate Hall.jpg": "/static/media/Wingate Hall.862e4d5a72486aa9ee0f.jpg",
+    "static/media/Compton-Goethals Hall.jpg": "/static/media/Compton-Goethals Hall.c12e73ce7676f54dddce.jpg",
+    "static/media/Shepard Hall.jpg": "/static/media/Shepard Hall.715ddd07956c1ec205da.jpg",
+    "static/media/Steinmann Hall.jpg": "/static/media/Steinmann Hall.dc0e20c7929e42e64da6.jpg",
+    "static/media/Marshak_Science_Building.jpeg": "/static/media/Marshak_Science_Building.13eaebdb5e019e6e9d8b.jpeg",
+    "static/media/Harris Hall.jpg": "/static/media/Harris Hall.0ccc8974fbac232ed7fe.jpg",
+    "static/media/NAC_Boiler.jpg": "/static/media/NAC_Boiler.62e972d5e414362d5b79.jpg",
+    "static/media/NAC_Northside.jpg": "/static/media/NAC_Northside.62e972d5e414362d5b79.jpg",
+    "static/media/logo.png": "/static/media/logo.95f41a69ad382914a09d.png",
+    "index.html": "/index.html",
+    "main.d0742aaa.css.map": "/static/css/main.d0742aaa.css.map",
+    "main.88b0a8aa.js.map": "/static/js/main.88b0a8aa.js.map",
+    "787.9e9f4ffd.chunk.js.map": "/static/js/787.9e9f4ffd.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.d0742aaa.css",
+    "static/js/main.88b0a8aa.js"
+  ]
+}
