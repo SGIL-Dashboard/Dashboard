@@ -138,8 +138,12 @@ const FileSelector = () => {
               }} className={`${stylings[theme].introSection.fileSelectorPack.button} border-r-[0rem]`}>Upload Your Own</button>
           </div>
           <div style={{transform : `translateX(${toggle ? "-50%" : 0})`}} className=" w-[200%] duration-200 ease-in-out h-fit shrink-0 flex items-center justify-start">
-          <div className=" w-[50%] shrink-0 gap-[1rem] flex items-center justify-center">
-         <img onClick={()=>
+          <div className=" w-[50%] relative shrink-0 gap-[1rem] flex items-center justify-center">
+        <div onClick={()=>
+              {
+                setRollDown(!rollDown);
+              }} className={stylings[theme].introSection.fileSelectorPack.selectedFileContainer}>
+        <img onClick={()=>
           {
             setExpandImg(true);
             console.log({val : selectedInstance.split(".xlsx")[0].replaceAll(" " , "_").replaceAll("-" , "_")})
@@ -147,17 +151,17 @@ const FileSelector = () => {
          <div 
             className={stylings[theme].introSection.fileSelectorPack.selectionOptionDiv}
           >
-            <button onClick={()=>
-              {
-                setRollDown(!rollDown);
-              }} className="w-full h-full pl-[1rem] shrink-0 flex items-center justify-between">
+            <button  className="w-full h-full pl-[1rem] shrink-0 flex items-center justify-between">
               <span className={stylings[theme].introSection.fileSelectorPack.selectedFile}>
                 {selectedInstance.split(".xlsx")[0]}
               </span>
               <span className=" ease-in-out duration-300" style={{transform  : `rotate(${!rollDown ? 0 : 90}deg)`}}><SVGComponent {...stylings[theme].introSection.fileSelectorPack.rollDownSvg}
               /></span>
             </button>
-            <motion.div tabIndex={-1}
+            
+          </div>
+        </div>
+        <motion.div tabIndex={-1}
           onBlur={()=>
             {
               setRollDown(false);
@@ -170,11 +174,9 @@ const FileSelector = () => {
                     setSelectedOption(val);
                     setSelectedInstance(val);
                     setRollDown(false);
-                  }} className={stylings[theme].introSection.fileSelectorPack.containerToBeSelected}><img src={assets[val.split(".xlsx")[0].replaceAll([" "] , "_").replaceAll("-" , "_")]} alt={assets.no_image} className=" w-[3rem] h-[3rem] rounded-full" /><span>{val.split(".xlsx")[0]}</span></motion.button>
+                  }} className={stylings[theme].introSection.fileSelectorPack.containerToBeSelected}><img src={assets[val.split(".xlsx")[0].replaceAll([" "] , "_").replaceAll("-" , "_")]} alt={assets.no_image} className=" w-[5rem] h-[5rem] rounded-full" /><span>{val.split(".xlsx")[0]}</span></motion.button>
               })}
             </motion.div>
-          </div>
-          
          </div>
           <form onSubmit={(e)=>{e.preventDefault()}} className=" w-[50%] h-[5rem] shrink-0 gap-[1rem] flex justify-center items-center">
             <div className=" relative w-[30%]">

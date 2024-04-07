@@ -6,9 +6,11 @@ import toast from "react-hot-toast";
 import { patterns } from "../../UTILS/UTILS_PATTERNS";
 import { stylings } from "../../UTILS/UTILS_STYLES";
 import { globalContext } from "../../Context/Context";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { insertCommas } from "../../UTILS/UTILS_HELPERS";
-export default function NumbersData({ selectionUpdated, setBessCost , setBessPower }) {
+import ToolTip from "./ToolTip";
+
+export default function NumbersData({ selectionUpdated, setBessCost, setBessPower }) {
   const { theme } = useContext(globalContext);
   const [inputs, setInputs] = React.useState({
     floatInput1: 967.5,
@@ -22,11 +24,12 @@ export default function NumbersData({ selectionUpdated, setBessCost , setBessPow
   });
   const [numberLoaded, setNumberLoaded] = React.useState(false);
   const [underProcess, setUnderProcess] = React.useState(false);
-  const [capitalCostSelection, setCapitalCostSelection] = React.useState("");
-  const [oAndMCostSelection, setOAndMCostSelection] = React.useState("");
+  const [capitalCostSelection, setCapitalCostSelection] = React.useState("kWh");
+  const [oAndMCostSelection, setOAndMCostSelection] = React.useState("kWh");
   const [recSelected, setRecSelected] = React.useState(true);
   const [bessCostRec, setBessCostRec] = React.useState(0);
   const [bessOut, setBessOut] = React.useState({});
+
   const formHelpers = {
     range: [
       {
@@ -35,7 +38,8 @@ export default function NumbersData({ selectionUpdated, setBessCost , setBessPow
         max: 100,
       },
       {
-        label: "BESS Footprint (ftSUP{2}/ kWh)",
+        // label: "BESS Footprint (inSUP{2}/ kWh)",
+        label: "BESS Footprint (in²/ kWh)",
         accessor: "footprint",
         max: 100,
       },
@@ -50,7 +54,7 @@ export default function NumbersData({ selectionUpdated, setBessCost , setBessPow
   const valuesRenderHelpers = [
     { label: "Est. BESS Capacity (kWh)", accessor: "BESS_capacity" },
     { label: "BESS Power (kW)", accessor: "BESS_power" },
-    { label: "BESS Footprint (ftSUP{2})", accessor: "BESS_footprint" },
+    { label: "BESS Footprint (inSUP{2})", accessor: "BESS_footprint" },
     { label: "BESS Cost", accessor: "BESS_cost" },
   ];
   const handleFetch = async () => {
@@ -116,7 +120,7 @@ export default function NumbersData({ selectionUpdated, setBessCost , setBessPow
         }}
       >
         <div className="w-full h-fit justify-between flex">
-          <div className=" w-1/2 flex flex-col gap-[2rem]">
+          <div className="w-1/2 flex flex-col gap-[2rem]">
             {formHelpers.range.map((val, id) => {
               const words = `${val.label}`.split(patterns.SUPERSCRIPTPATTER);
               const startingPos = val.label.search(patterns.SUPERSCRIPTPATTER);
@@ -125,14 +129,11 @@ export default function NumbersData({ selectionUpdated, setBessCost , setBessPow
                 .split("SUP{")
                 .join("")
                 .split("}")[0];
-              console.log({ words });
+
               return (
-                <div
-                  key={id}
-                  className={stylings[theme].calculation.rangeParent}
-                >
+                <div key={id} className={stylings[theme].calculation.rangeParent}>
                   <label
-                    className=" text-[1.1rem] text-slate-400"
+                    className="text-[1.1rem] relative text-slate-400"
                     htmlFor={`${val.accessor}-${id}`}
                   >
                     {startingPos !== -1
@@ -148,6 +149,7 @@ export default function NumbersData({ selectionUpdated, setBessCost , setBessPow
                           return <span>{val}</span>;
                         })
                       : val.label}
+                      <ToolTip text={val.label}/>
                   </label>
                   <div className="w-full flex items-center gap-[.5rem]">
                     <input
@@ -163,14 +165,13 @@ export default function NumbersData({ selectionUpdated, setBessCost , setBessPow
                       min="0"
                       max={val.max}
                     />
-                    <span className=" text-[1.1rem]">
-                      {inputs[val.accessor]}
-                    </span>
+                    <span className="text-[1.1rem]">{inputs[val.accessor]}</span>
                   </div>
                 </div>
               );
             })}
           </div>
+          
           <div className=" w-[45%] flex flex-col gap-[2rem]">
             <div className="flex items-start justify-start overflow-hidden flex-col w-full shrink-0">
               <label className=" text-[1.1rem] flex items-center text-slate-400">
@@ -185,9 +186,9 @@ export default function NumbersData({ selectionUpdated, setBessCost , setBessPow
                   <option value={"kWh"}>kWh</option>
                   <option value={"kW"}>kW</option>
                   <option value={"Both"}>kWh & kW</option>
-                  <option disabled value={""}>
+                  {/* <option disabled value={""}>
                     Choose
-                  </option>
+                  </option> */}
                 </select>
                 {")"}
               </label>
@@ -195,12 +196,11 @@ export default function NumbersData({ selectionUpdated, setBessCost , setBessPow
               {capitalCostSelection ? (
                 <div
                   style={{
-                    transform: `translateX(${
-                      capitalCostSelection === "kWh" ||
-                      capitalCostSelection === "Both"
+                    transform: `translateX(${capitalCostSelection === "kWh" ||
+                        capitalCostSelection === "Both"
                         ? 0
                         : "-50%"
-                    })`,
+                      })`,
                     gap: capitalCostSelection === "Both" ? "2rem" : 0,
                   }}
                   className="w-[200%] h-[2.7rem] shrink-0 flex  duration-300 ease-in-out items-center justify-start"
@@ -250,12 +250,13 @@ export default function NumbersData({ selectionUpdated, setBessCost , setBessPow
                   }}
                   className=" outline-none text-center bg-transparent mx-[.3rem] rounded-md border-[0.1rem] border-slate-300"
                 >
+
                   <option value={"kWh"}>kWh</option>
                   <option value={"YEAR"}>Year</option>
                   <option value={"Both"}>kWh & Year</option>
-                  <option disabled value={""}>
+                  {/* <option disabled value={""}>
                     Choose
-                  </option>
+                  </option> */}
                 </select>
                 {")"}
               </label>
@@ -263,12 +264,11 @@ export default function NumbersData({ selectionUpdated, setBessCost , setBessPow
               {oAndMCostSelection ? (
                 <div
                   style={{
-                    transform: `translateX(${
-                      oAndMCostSelection === "kWh" ||
-                      oAndMCostSelection === "Both"
+                    transform: `translateX(${oAndMCostSelection === "kWh" ||
+                        oAndMCostSelection === "Both"
                         ? 0
                         : "-50%"
-                    })`,
+                      })`,
                     gap: oAndMCostSelection === "Both" ? "2rem" : 0,
                   }}
                   className="w-[200%] duration-300 ease-in-out shrink-0 flex items-center"
@@ -373,27 +373,27 @@ export default function NumbersData({ selectionUpdated, setBessCost , setBessPow
           </button>
         </div>
       </form>
-      <div className="div w-[40%] px-[1rem] h-full flex items-center justify-center">
-        <div className=" w-full flex flex-wrap justify-between gap-y-[4rem]">
-          {valuesRenderHelpers.map((val, id) => {
-            const words = `${val.label}`.split(patterns.SUPERSCRIPTPATTER);
-            const startingPos = val.label.search(patterns.SUPERSCRIPTPATTER);
-            const value = val.label
-              .slice(startingPos)
-              .split("SUP{")
-              .join("")
-              .split("}")[0];
-            console.log({ words });
-            console.log({ label: val.label, startingPos, value, words });
-            return (
-              <div
-                key={id}
-                className=" w-[40%] justify-center flex flex-col items-center"
-              >
-                <div className="div flex flex-col">
-                  <label className=" whitespace-nowrap text-[1rem] text-slate-400">
-                    {startingPos !== -1
-                      ? words.map((val, ids) => {
+        <div className="div w-[40%] px-[1rem] h-full flex items-center justify-center">
+          <div className=" w-full flex flex-wrap justify-between gap-y-[4rem]">
+            {valuesRenderHelpers.map((val, id) => {
+              const words = `${val.label}`.split(patterns.SUPERSCRIPTPATTER);
+              const startingPos = val.label.search(patterns.SUPERSCRIPTPATTER);
+              const value = val.label
+                .slice(startingPos)
+                .split("SUP{")
+                .join("")
+                .split("}")[0];
+              console.log({ words });
+              console.log({ label: val.label, startingPos, value, words });
+              return (
+                <div
+                  key={id}
+                  className=" w-[40%] justify-center flex flex-col items-center"
+                >
+                  <div className="div flex flex-col">
+                    <label className=" whitespace-nowrap text-[1rem] text-slate-400">
+                      {startingPos !== -1
+                        ? words.map((val, ids) => {
                           if (ids === 0) {
                             return (
                               <span>
@@ -404,21 +404,21 @@ export default function NumbersData({ selectionUpdated, setBessCost , setBessPow
                           }
                           return <span>{val}</span>;
                         })
-                      : val.label}
-                  </label>
-                  <span className={stylings[theme].calculation.value}>
-                    {val.accessor === "BESS_cost"
-                      ? `${"$"}${insertCommas(bessOut[val.accessor])}`
-                      : bessOut[val.accessor]}
-                  </span>
+                        : val.label}
+                    </label>
+                    <span className={stylings[theme].calculation.value}>
+                      {val.accessor === "BESS_cost"
+                        ? `${"$"}${insertCommas(bessOut[val.accessor])}`
+                        : bessOut[val.accessor]}
+                    </span>
+                  </div>
                 </div>
-              </div>
-            );
-          })}
-        </div>
-      </div></> : <>          <div className=" w-full h-[18rem] flex items-center justify-center">
-            <Loader />
-          </div></>}
+              );
+            })}
+          </div>
+        </div></> : <>          <div className=" w-full h-[18rem] flex items-center justify-center">
+          <Loader />
+        </div></>}
     </div>
   );
 }

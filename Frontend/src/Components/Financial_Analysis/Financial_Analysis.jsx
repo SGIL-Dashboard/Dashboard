@@ -7,7 +7,7 @@ import SVGComponent from "../SVGS/SVGS";
 import { makeApiRequest } from "../../UTILS/UTILS_HELPERS";
 import toast from "react-hot-toast";
 import Results from "./Results";
-export default function FinancialAnalysis({ bessCost  , bessPower}) {
+export default function FinancialAnalysis({ bessCost  , bessPower}) { 
   const { theme } = React.useContext(globalContext);
   const errorsInitialState = {
     projectDebt: {
@@ -408,7 +408,7 @@ export default function FinancialAnalysis({ bessCost  , bessPower}) {
     }
   }
   return (
-    <div className=" w-full h-fit py-[2rem] shrink-0 flex flex-col items-center gap-[4rem] justify-start changebg">
+    <div className={stylings[theme].financialAnalysis.masterStyle}>
       {!bessCost ? (
         <div className="w-full h-[30rem] flex items-center justify-center">
           <Loader />
@@ -420,12 +420,12 @@ export default function FinancialAnalysis({ bessCost  , bessPower}) {
           </span>
           <div className=" w-full flex items-start justify-start">
             <div className=" w-[25%] pt-[1rem] ml-[2rem] shrink-0 flex flex-col items-center">
-              <span className=" text-[1.3rem] w-full bg-slate-100 py-[.5rem] text-slate-400 font-semibold">Select Parameters</span>
+              <span className={stylings[theme].financialAnalysis.containerHeading}>Select Parameters</span>
               {parameters.map((val) => {
-                return <div  className={selectedParameters.includes(val.accessor) ? " w-full border-b-[0.05rem] border-blue-900 flex items-center  bg-slate-200 justify-between" : " w-full border-b-[0.05rem] border-blue-900 bg-slate-100 flex items-center  hover:bg-slate-200 justify-between"}>
+                return <div  className={selectedParameters.includes(val.accessor) ? stylings[theme].financialAnalysis.formOptions.selected : stylings[theme].financialAnalysis.formOptions.notSelected}>
                   <button onClick={() => {
                   handleClick(val.accessor , true);
-                }} className=" text-[1.2rem] py-[.4rem] flex-grow text-slate-700">{val.label}</button>
+                }} className=" text-[1.2rem] py-[.4rem] flex-grow ">{val.label}</button>
                   {selectedParameters.includes(val.accessor) ? <><button className=" pr-[0.2rem]" onClick={() => {
                     if(selectedForm === val.accessor)
                     {
@@ -435,17 +435,17 @@ export default function FinancialAnalysis({ bessCost  , bessPower}) {
                     {
                       setSelectedForm(val.accessor);
                     }
-                }}><SVGComponent selector={val.accessor=== selectedForm ? "eyeOpened" : "eyeClosed"} width={"w-[1.5rem]"} color={val.accessor === selectedForm ? "#1E3A8A" : "#9CA3AF"} /></button><button className=" pr-[0.2rem]" onClick={() => {
+                }}><SVGComponent selector={val.accessor=== selectedForm ? "eyeOpened" : "eyeClosed"} width={"w-[1.5rem]"} color={val.accessor === selectedForm ? stylings[theme].financialAnalysis.svgEyeColor.selected : stylings[theme].financialAnalysis.svgEyeColor.notSelected} /></button><button className=" pr-[0.2rem]" onClick={() => {
                   handleClick(val.accessor , false);
-                }}><SVGComponent selector={"boldCross"} width={"w-[1.5rem]"} color="#1E3A8A" /></button></> : <></>}
+                }}><SVGComponent selector={"boldCross"} width={"w-[1.5rem]"} color={stylings[theme].financialAnalysis.svgEyeCrossButton} /></button></> : <></>}
                 </div>
               })}
               <button onClick={() => {
                 handleSubmit();
-              }} className=" w-full h-[3rem] flex items-center justify-center shrink-0 mt-[2rem] text-[1.4rem] text-blue-900 border-[0.1rem] border-blue-900 rounded-full">Calculate</button>
+              }} className={stylings[theme].financialAnalysis.calculateButton}>Calculate</button>
             </div>
             <Results results={results} renderResultsHelper={renderResultsHelper} />
-            {selectedForm ? <RenderForm bessPower = {bessPower} errors={errors[selectedForm]} val={selectedForm} formHelper={formHelpers[selectedForm]} state={state} setState={setState}/> : <div className=" w-[30%] flex flex-col items-center justify-center">
+            {selectedForm ? <RenderForm bessPower = {bessPower} errors={errors[selectedForm]} val={selectedForm} formHelper={formHelpers[selectedForm]} state={state} setState={setState}/> : <div className=" w-[30%] h-[100%] flex flex-col items-center justify-center">
               <SVGComponent selector="select" width="w-[5rem]" color="#94A3B8"/>
               <span className=" text-[1.5rem] text-slate-400 font-semibold">Please Select a Parameter</span>
             </div>}

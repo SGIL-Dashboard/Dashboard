@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./Bess.css"; // Import the CSS file
 import axios from "axios";
 import Plot from "react-plotly.js";
-
+import HoverTooltip from './HoverTooltip';
 const Bess = () => {
   const [bessOut, setBessOut] = useState({});
   const [month3Data, setMonth3Data] = useState({});
@@ -187,7 +187,7 @@ const Bess = () => {
           <form style={{ display: "flex", flexDirection: "column" }}>
             <div style={{ marginBottom: "10px" }}>
               <label style={{ flex: "1", color: "white", fontSize: "20px" }}>
-                BESS Depth of Discharge (%):
+                BESS Depth of Discharge
               </label>
               <input
                 style={{ flex: "1", marginLeft: "10px", minWidth: "4px" }}
@@ -200,7 +200,7 @@ const Bess = () => {
 
             <div style={{ marginBottom: "10px" }}>
               <label style={{ flex: "1", color: "white", fontSize: "20px" }}>
-                BESS Footprint (ft^2/ kWh):
+                BESS Footprint (in^2/ kWh):
               </label>
               <input
                 style={{ flex: "1", marginLeft: "10px", minWidth: "4px" }}

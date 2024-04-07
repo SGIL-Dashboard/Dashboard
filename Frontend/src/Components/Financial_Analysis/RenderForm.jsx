@@ -16,9 +16,9 @@ export default function RenderForm({ formHelper, state, setState, errors  , val 
   return <>
   {val === "demandResponse" ? <form className=" w-[30%] mt-[1rem] p-[1rem] border-[0.15rem] rounded-lg relative flex flex-col items-center justify-center">
   <div className=" w-full justify-between flex pt-[1rem] items-center">
-        <span className=" absolute top-[-1rem] bg-white text-slate-400 text=[1.1rem] left-[1rem] px-[.5rem]">Demand Response</span>
+        <span className={stylings[theme].financialAnalysis.renderedForm.headingSpan}>Demand Response</span>
         <span className=" flex-1 text-start text-slate-400  text-[0.9rem]">Months</span>
-        <span className=" flex-1 text-[0.9rem] text-slate-400 flex flex-col "><span>Commitment</span> <span>Amount {"("}<select className=" text-center outline-none" onChange={(e)=>
+        <span className=" flex-1 text-[0.9rem] text-slate-400 flex flex-col "><span>Commitment</span> <span>Amount {"("}<select className=" text-center outline-none bg-transparent" onChange={(e)=>
           {
             const demandResponse = state.demandResponse.inputs;
             const value = e.target.value;
@@ -59,9 +59,9 @@ export default function RenderForm({ formHelper, state, setState, errors  , val 
     {formHelper.fields.map((val) => 
     {
       return <div className=" w-full justify-between flex items-center">
-        <span className=" absolute top-[-1rem] bg-white text-slate-400 text=[1.1rem] left-[1rem] px-[.5rem]">Demand Response</span>
-        <span className=" flex-1 font-semibold text-start text-blue-900 text-[1.2rem]">{val.label}</span>
-        <input type="text" className=" ULInput w-[25%] shrink-0 text-center outline-none" onChange={(e)=>
+        
+        <span className={stylings[theme].financialAnalysis.renderedForm.monthsLabel}>{val.label}</span>
+        <input type="text" className={stylings[theme].financialAnalysis.renderedForm.DrInputs} onChange={(e)=>
           {
             const value = +e.target.value;
             if(`${value}` === "NaN")
@@ -96,7 +96,7 @@ export default function RenderForm({ formHelper, state, setState, errors  , val 
               }
             })
           }} value={state[formHelper.accessor].inputs[val.accessor].CommitmentAmount}/>
-        <input type="text" className=" ULInput w-[25%] shrink-0 text-center outline-none" onChange={(e)=>
+        <input type="text" className={stylings[theme].financialAnalysis.renderedForm.DrInputs} onChange={(e)=>
           {
             const value = +e.target.value;
             if(`${value}` === "NaN") return
@@ -127,7 +127,7 @@ export default function RenderForm({ formHelper, state, setState, errors  , val 
               }
             })
           }} value={state[formHelper.accessor].inputs[val.accessor].CommitmentPayment}/>
-       <span className="flex-1">{state[formHelper.accessor].inputs[val.accessor].totalDrPayment}</span>
+       <span className={stylings[theme].financialAnalysis.renderedForm.totalDrPaymentSpan}>{state[formHelper.accessor].inputs[val.accessor].totalDrPayment}</span>
         {/* <span className=" flex-1">{state[formHelper.accessor].inputs[val.accessor].CommitmentPayment}</span> */}
       </div>
     })}
@@ -137,7 +137,7 @@ export default function RenderForm({ formHelper, state, setState, errors  , val 
       }}
       className={parentStylings}
     >
-      <span className=" text-[1.3rem] bg-white items-center absolute px-[.5rem] top-[-1.2rem] left-[50%] translate-x-[-50%]  flex text-slate-400">
+      <span className={stylings[theme].financialAnalysis.renderedForm.headingSpan}>
         {formHelper.label}
       </span>
       {formHelper.fields.map((val) => {
@@ -209,6 +209,7 @@ export default function RenderForm({ formHelper, state, setState, errors  , val 
                     });
                   }}
                   value={selectedVal}
+                  className="bg-transparent"
                 >
                   <option value={val.multipleMeasureUnits[0]}>
                     {val.multipleMeasureUnits[0]}

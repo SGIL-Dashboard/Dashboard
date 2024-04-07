@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./Bess.css"; // Import the CSS file
 import axios from "axios";
-
+import HoverTooltip from './HoverTooltip';
 const Bess = () => {
   const [bessOut, setBessOut] = useState({});
 
