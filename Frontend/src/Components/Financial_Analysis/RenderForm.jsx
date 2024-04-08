@@ -59,7 +59,6 @@ export default function RenderForm({ formHelper, state, setState, errors  , val 
     {formHelper.fields.map((val) => 
     {
       return <div className=" w-full justify-between flex items-center">
-        
         <span className={stylings[theme].financialAnalysis.renderedForm.monthsLabel}>{val.label}</span>
         <input type="text" className={stylings[theme].financialAnalysis.renderedForm.DrInputs} onChange={(e)=>
           {
@@ -154,7 +153,7 @@ export default function RenderForm({ formHelper, state, setState, errors  , val 
             >
               {
                 val.type === "span" ? <span>{val.label}</span> : <>
-                <label className=" text-[1.1rem] text-slate-400">
+                <span className=" text-[1.1rem] text-slate-400">
                 {val.label}
                 {"("}
                 <select
@@ -219,7 +218,7 @@ export default function RenderForm({ formHelper, state, setState, errors  , val 
                   </option>
                 </select>
                 {")"}
-              </label>
+              </span>
               <div
                 className=" w-[100%] duration-300 ease-in-out shrink-0 flex items-center justify-start"
               >

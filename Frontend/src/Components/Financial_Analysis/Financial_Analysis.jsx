@@ -7,6 +7,7 @@ import SVGComponent from "../SVGS/SVGS";
 import { makeApiRequest } from "../../UTILS/UTILS_HELPERS";
 import toast from "react-hot-toast";
 import Results from "./Results";
+import ToolTip from "../NumbersData/ToolTip";
 export default function FinancialAnalysis({ bessCost  , bessPower}) { 
   const { theme } = React.useContext(globalContext);
   const errorsInitialState = {
@@ -425,7 +426,9 @@ export default function FinancialAnalysis({ bessCost  , bessPower}) {
                 return <div  className={selectedParameters.includes(val.accessor) ? stylings[theme].financialAnalysis.formOptions.selected : stylings[theme].financialAnalysis.formOptions.notSelected}>
                   <button onClick={() => {
                   handleClick(val.accessor , true);
-                }} className=" text-[1.2rem] py-[.4rem] flex-grow ">{val.label}</button>
+                }} className=" text-[1.2rem] py-[.4rem] flex-grow "><label className="relative">{val.label}
+                <ToolTip left={true} text={val.label}/>
+                </label></button>
                   {selectedParameters.includes(val.accessor) ? <><button className=" pr-[0.2rem]" onClick={() => {
                     if(selectedForm === val.accessor)
                     {

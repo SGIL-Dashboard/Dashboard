@@ -1,9 +1,11 @@
 import React from 'react'
-
-export default function ToolTip({text}) {
+import { globalContext } from '../../Context/Context'
+import { stylings } from '../../UTILS/UTILS_STYLES'
+export default function ToolTip({text , left}) {
+  const {theme} = React.useContext(globalContext)
   return (
-    <div className='TT bg-[rgba(30,64,175,0.8)] py-[0.15rem] rounded-md border-[0.2rem] border-blue-400 px-[1rem]'>
-     <span className=' whitespace-nowrap text-white'>{text}</span>
+    <div className={left ? stylings[theme].toolTip.left : stylings[theme].toolTip.middle}>
+     <span className=' whitespace-nowrap font-bold text-white'>{text}</span>
     </div>
   )
 }

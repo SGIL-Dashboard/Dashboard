@@ -1,6 +1,7 @@
 export const stylings = {
     light : 
     {
+    toolTip : {left : "TT bg-[rgba(30,64,175,0.8)] py-[0.15rem] rounded-md border-[0.2rem] border-blue-400 px-[1rem] TTL" , middle : "TT bg-[rgba(30,64,175,0.6)] py-[0.15rem] rounded-md border-[0.2rem] border-blue-400 px-[1rem]"},
      navbar : {
       container : "w-full bg-blue-100 sticky top-0 z-[300] h-fit shrink-0 flex items-center justify-between px-[3rem] py-[1.2rem]",
       text : "text-[1.7rem] font-semibold text-blue-800",
@@ -70,6 +71,7 @@ export const stylings = {
      }
     },
     dark : {
+        toolTip : {left : "TT bg-[rgba(0,0,0,0.8)] py-[0.15rem] rounded-md border-[0.2rem] border-gray-400 px-[1rem] TTL" , middle : "TT bg-[rgba(0,0,0,0.6)] py-[0.15rem] rounded-md border-[0.2rem] border-gray-400 px-[1rem]"},
      navbar : {
       container : "w-full bg-gray-900 h-fit shrink-0 flex sticky top-0 z-[300] items-center justify-between px-[3rem] py-[1.2rem]",
       text : "text-[1.7rem] font-semibold text-white",

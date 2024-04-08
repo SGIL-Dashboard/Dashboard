@@ -10,6 +10,7 @@ import { globalContext } from "../../Context/Context";
 import { useContext } from "react";
 import TimeTaker from "./timeTaker";
 import toast from "react-hot-toast";
+import ToolTip from "../NumbersData/ToolTip";
 const PlotlyComponent = createPlotlyComponent(Plotly);
 
 export default function Charts_handling({ selectionUpdated, selectedOption }) {
@@ -19,12 +20,18 @@ export default function Charts_handling({ selectionUpdated, selectedOption }) {
   const [loaded, setLoaded] = React.useState(false);
 
   const charts = [
-    `Monthly Load Profile: ${selectedBuilding}`,
-    `Date Range Load Profile: ${selectedBuilding}`,
-    `Monthly Peak and Average Demand: ${selectedBuilding}`,
-    `Load Profile for ${selectedBuilding}: Monthly Variation`,
-    `Load Profile for ${selectedBuilding}: Daily Variation`,
-    `Forecasted Load Profile for ${selectedBuilding}`,
+    { title: `Monthly Load Profile: ${selectedBuilding}`, toolTip : "Load Profile" },
+    { title: `Date Range Load Profile: ${selectedBuilding}`, toolTip : "Date Range Load Profile" },
+    { title: `Monthly Peak and Average Demand: ${selectedBuilding}`, toolTip : "Monthly Peak and Average Demand" },
+    { title: `Load Profile for ${selectedBuilding}: Monthly Variation`, toolTip : "Load Profile for Monthly Variation" },
+    { title: `Load Profile for ${selectedBuilding}: Daily Variation`, toolTip : "Load Profile for Daily Variation" },
+    { title: `Forecasted Load Profile for ${selectedBuilding}`, toolTip : "Forecasted Load Profile" },
+    // `Monthly Load Profile: ${selectedBuilding}`,
+    // `Date Range Load Profile: ${selectedBuilding}`,
+    // `Monthly Peak and Average Demand: ${selectedBuilding}`,
+    // `Load Profile for ${selectedBuilding}: Monthly Variation`,
+    // `Load Profile for ${selectedBuilding}: Daily Variation`,
+    // `Forecasted Load Profile for ${selectedBuilding}`,
   ];
   const [month3Data, setMonth3Data] = React.useState({});
   const [profileData, setProfileData] = React.useState({});
@@ -58,7 +65,7 @@ export default function Charts_handling({ selectionUpdated, selectedOption }) {
   });
 
   const BarGraphlayout = {
-    title: charts[1],
+    title: charts[1].title,
     xaxis: { title: "Month" },
     yaxis: { title: "Demand" },
     barmode: "stack", // Use 'group' for grouped bars
@@ -207,13 +214,14 @@ export default function Charts_handling({ selectionUpdated, selectedOption }) {
                         .button.notSelected
                 }
               >
-                <span
+                <label
                   className={
-                    stylings[theme].chartSelection.chartSelectorContainer.span
+                    `${stylings[theme].chartSelection.chartSelectorContainer.span} relative`
                   }
                 >
-                  {val}
-                </span>
+                  <ToolTip left={true} text={val.toolTip}/>
+                  {val.title}
+                </label>
               </button>
             );
           })}

@@ -16,8 +16,8 @@ import { useContext } from "react";
 import FinancialAnalysis from "./Financial_Analysis/Financial_Analysis";
 const FileSelector = () => {
   const {theme} = useContext(globalContext);
-  const [selectedOption, setSelectedOption] = useState("Administration Building.xlsx");
-  const [selectedInstance , setSelectedInstance] = useState("Administration Building.xlsx");
+  const [selectedOption, setSelectedOption] = useState("");
+  const [selectedInstance , setSelectedInstance] = useState("");
   const [toggle , setToggle] = useState(false);
   const [fileData, setFileData] = useState([]);
   const [expandImg , setExpandImg] = useState(false);
@@ -66,9 +66,13 @@ const FileSelector = () => {
   };
 
   useEffect(() => {
+    fetchData();
+    if(selectedOption)
+    {
     setSelectionUpdated(false);
     fetchData();
     fileName();
+    }
   }, [selectedOption]);
   const handleSubmit = async()=>
   {
@@ -115,7 +119,7 @@ const FileSelector = () => {
       <div className=" w-full h-fit flex  py-[3rem] items-center justify-evenly shrink-0">
         <div className="flex w-1/2 flex-col items-start h-full justify-start">  
           <h1 className={stylings[theme].introSection.heading}>
-            {`Building Load Profile Analysis for `}<span className=" whitespace-nowrap">{selectedOption.split(".xlsx")[0]}</span>
+            {selectedOption ? `Building Load Profile Analysis for ` : `Building Load Profile Analysis`}<span className=" whitespace-nowrap">{selectedOption.split(".xlsx")[0]}</span>
           </h1>
           {/* <h1 className={stylings[theme].introSection.heading}>
           Battery Energy Storage Sizing
@@ -143,17 +147,17 @@ const FileSelector = () => {
               {
                 setRollDown(!rollDown);
               }} className={stylings[theme].introSection.fileSelectorPack.selectedFileContainer}>
-        <img onClick={()=>
+        {selectedOption && <img onClick={()=>
           {
             setExpandImg(true);
             console.log({val : selectedInstance.split(".xlsx")[0].replaceAll(" " , "_").replaceAll("-" , "_")})
-          }} src={assets[selectedInstance.split(".xlsx")[0].replaceAll(" " , "_").replaceAll("-" , "_")]} alt="img" className=" w-[5rem] cursor-pointer h-[5rem] rounded-full object-cover"/>
+          }} src={assets[selectedInstance.split(".xlsx")[0].replaceAll(" " , "_").replaceAll("-" , "_")]} alt="img" className=" w-[5rem] cursor-pointer h-[5rem] rounded-full object-cover"/>}
          <div 
-            className={stylings[theme].introSection.fileSelectorPack.selectionOptionDiv}
+            className={selectedOption ? stylings[theme].introSection.fileSelectorPack.selectionOptionDiv : `${stylings[theme].introSection.fileSelectorPack.selectionOptionDiv} flex-grow`}
           >
             <button  className="w-full h-full pl-[1rem] shrink-0 flex items-center justify-between">
-              <span className={stylings[theme].introSection.fileSelectorPack.selectedFile}>
-                {selectedInstance.split(".xlsx")[0]}
+              <span className={selectedOption ? stylings[theme].introSection.fileSelectorPack.selectedFile : `${stylings[theme].introSection.fileSelectorPack.selectedFile}`}>
+                {selectedInstance ? selectedInstance.split(".xlsx")[0] : "Select Building To Analyze"}
               </span>
               <span className=" ease-in-out duration-300" style={{transform  : `rotate(${!rollDown ? 0 : 90}deg)`}}><SVGComponent {...stylings[theme].introSection.fileSelectorPack.rollDownSvg}
               /></span>

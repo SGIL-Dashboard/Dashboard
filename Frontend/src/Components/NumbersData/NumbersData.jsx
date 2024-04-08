@@ -113,7 +113,7 @@ export default function NumbersData({ selectionUpdated, setBessCost, setBessPowe
   });
   return (
     <div className={stylings[theme].calculation.parent}>
-      {numberLoaded ? <><form
+      {<><form
         className={stylings[theme].calculation.subParent}
         onSubmit={(e) => {
           e.preventDefault();
@@ -171,11 +171,10 @@ export default function NumbersData({ selectionUpdated, setBessCost, setBessPowe
               );
             })}
           </div>
-          
           <div className=" w-[45%] flex flex-col gap-[2rem]">
             <div className="flex items-start justify-start overflow-hidden flex-col w-full shrink-0">
-              <label className=" text-[1.1rem] flex items-center text-slate-400">
-                {"BESS Capital Cost ($/"}
+              <span className=" text-[1.1rem] relative flex items-center text-slate-400">
+                <label htmlFor="" className=" relative">{"BESS Capital Cost ($/"}<ToolTip text={"BESS Capital Cost"}/></label>
                 <select
                   value={capitalCostSelection}
                   onChange={(e) => {
@@ -190,8 +189,9 @@ export default function NumbersData({ selectionUpdated, setBessCost, setBessPowe
                     Choose
                   </option> */}
                 </select>
+                
                 {")"}
-              </label>
+              </span>
 
               {capitalCostSelection ? (
                 <div
@@ -241,8 +241,10 @@ export default function NumbersData({ selectionUpdated, setBessCost, setBessPowe
               )}
             </div>
             <div className="flex items-start justify-start overflow-hidden flex-col w-full shrink-0">
-              <label className=" text-[1.1rem] items-center   flex text-slate-400">
-                {"BESS O&M Cost ($/"}
+              <span className=" text-[1.1rem] items-center   flex text-slate-400">
+                <label className=" relative">{"BESS O&M Cost ($/"}
+                <ToolTip text={"BESS O&M Cost"}/>
+                </label>
                 <select
                   value={oAndMCostSelection}
                   onChange={(e) => {
@@ -259,7 +261,7 @@ export default function NumbersData({ selectionUpdated, setBessCost, setBessPowe
                   </option> */}
                 </select>
                 {")"}
-              </label>
+              </span>
 
               {oAndMCostSelection ? (
                 <div
@@ -309,8 +311,10 @@ export default function NumbersData({ selectionUpdated, setBessCost, setBessPowe
               )}
             </div>
             <div className="flex items-start justify-start overflow-hidden flex-col w-full shrink-0">
-              <label className=" text-[1.1rem] items-center   flex text-slate-400">
-                {"BESS Capacity ("}
+              <span className=" text-[1.1rem] items-center   flex text-slate-400">
+                <label className=" relative" htmlFor="">{"BESS Capacity ("}
+                <ToolTip text={"BESS Capacity"}/>
+                </label>
                 <select
                   value={recSelected}
                   onChange={(e) => {
@@ -322,7 +326,7 @@ export default function NumbersData({ selectionUpdated, setBessCost, setBessPowe
                   <option value={false}>Custom</option>
                 </select>
                 {")"}
-              </label>
+              </span>
 
               {/* {oAndMCostSelection ?  : <div className=" w-full h-[2.7rem]"></div>} */}
               <div
@@ -374,7 +378,8 @@ export default function NumbersData({ selectionUpdated, setBessCost, setBessPowe
         </div>
       </form>
         <div className="div w-[40%] px-[1rem] h-full flex items-center justify-center">
-          <div className=" w-full flex flex-wrap justify-between gap-y-[4rem]">
+          
+          {numberLoaded? <><div className=" w-full flex flex-wrap justify-between gap-y-[4rem]">
             {valuesRenderHelpers.map((val, id) => {
               const words = `${val.label}`.split(patterns.SUPERSCRIPTPATTER);
               const startingPos = val.label.search(patterns.SUPERSCRIPTPATTER);
@@ -415,9 +420,9 @@ export default function NumbersData({ selectionUpdated, setBessCost, setBessPowe
                 </div>
               );
             })}
-          </div>
-        </div></> : <>          <div className=" w-full h-[18rem] flex items-center justify-center">
+          </div></> : <><div className=" w-full h-[18rem] flex items-center justify-center">
           <Loader />
+        </div></>}
         </div></>}
     </div>
   );
