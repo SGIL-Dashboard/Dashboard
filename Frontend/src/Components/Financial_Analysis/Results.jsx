@@ -6,7 +6,7 @@ import ToolTip from '../NumbersData/ToolTip'
 
 export default function Results({results , renderResultsHelper}) {
   const {theme} = React.useContext(globalContext)
- const amtInDollars = ["npv" , "itc" , "bill_savings_yr1" , "dr_rev_yr1" ]
+ const amtInDollars = ["npv" , "itc" , "year1_bill_savings" , "dr_capacity_revenue" ]
   return (
     <div className='div w-[40%] flex items-center gap-[.5rem] justify-between flex-wrap'>
      {renderResultsHelper.map((val , index) =>

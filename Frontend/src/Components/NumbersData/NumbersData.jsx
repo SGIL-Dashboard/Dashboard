@@ -29,7 +29,6 @@ export default function NumbersData({ selectionUpdated, setBessCost, setBessPowe
   const [recSelected, setRecSelected] = React.useState(true);
   const [bessCostRec, setBessCostRec] = React.useState(0);
   const [bessOut, setBessOut] = React.useState({});
-
   const formHelpers = {
     range: [
       {
@@ -413,7 +412,7 @@ export default function NumbersData({ selectionUpdated, setBessCost, setBessPowe
                     </label>
                     <span className={stylings[theme].calculation.value}>
                       {val.accessor === "BESS_cost"
-                        ? `${"$"}${insertCommas(bessOut[val.accessor])}`
+                        ? `${"$"}${insertCommas(`${bessOut[val.accessor]}`.split(".")[0])}.${`${bessOut[val.accessor]}`.split(".")[1]}`
                         : bessOut[val.accessor]}
                     </span>
                   </div>

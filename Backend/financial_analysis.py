@@ -433,12 +433,8 @@ for year_info in schedule:
 #Reservation Calc DLRP (Tier 2)	    5.00	    5
 def capacity_payment_calc():
     return 0
-
-
 #----------------------End Capacity Payment ----------------------------------------------    
-    
 #-----------------------Start Payback Calc --------------------------------------------------
-    
 # rows = ['Cash Flow', 'Cummulative Cash Flow','DR Capacity Revenue', 'Bill Savings','OM Expense', 'Insurance', 'Property Tax', 'EBITDA', 'Interest', 'Principal',  'Depreciation','State Tax', 'Fed Tax']    
 def calculate_payback(project_length,debt_term, financial_df):
     cash_flow = 0

@@ -499,7 +499,7 @@ export default function Charts_handling({ selectionUpdated, selectedOption }) {
                       setTimeSelection={setTimeSelection}
                     />
                     <div className="div relative w-[25%] py-[1rem] rounded-xl justify-center shrink-0 flex flex-col border-[0.15rem] items-center border-slate-400">
-                    <span className=' text-[1.1rem] bg-white absolute px-[.5rem] top-[-0.9rem] left-[1rem]  flex text-slate-400 '>Markings</span>
+                    <span className={stylings[theme].chartSelection.chartSelectorContainer.timeTakers.heading}>Markings</span>
                     <div className=" flex flex-col items-start">
                     {formHelpers.map((val, id) => {
                         return (

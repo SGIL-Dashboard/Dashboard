@@ -51,7 +51,8 @@ export default function FinancialAnalysis({ bessCost  , bessPower}) {
       commitmentPayment: false
     }
   }
-  const [results, setResults] = React.useState({ npv: 100000, irr: 14, payback_period: 4, lcoe: 0.15, itc: 145125, bill_savings_yr1: 29825, dr_rev_yr1: 34850 });
+  const [loaded , setLoaded] = useState(false);
+  const [results, setResults] = React.useState({ npv: 100000, irr: 14, payback_period: 4, lcoe: 0.15, itc: 145125, year1_bill_savings: 29825, dr_capacity_revenue: 34850 });
   const renderResultsHelper = [
     {
       label: "Payback Time", accessor: "payback_period" , backLabel : " Years"
@@ -60,7 +61,7 @@ export default function FinancialAnalysis({ bessCost  , bessPower}) {
       label: "NPV", accessor: "npv"
     },
     {
-      label: "DR Revenue", accessor: "dr_rev_yr1"
+      label: "DR Revenue", accessor: "dr_capacity_revenue"
     },
     {
       label: "IRR", accessor: "irr" , backLabel : " / %"
@@ -69,7 +70,7 @@ export default function FinancialAnalysis({ bessCost  , bessPower}) {
       label: "ITC", accessor: "itc"
     },
     {
-      label: "1 Year Bill Savings", accessor: "bill_savings_yr1"
+      label: "1 Year Bill Savings", accessor: "year1_bill_savings"
     },
     {
       label: "LCOE", accessor: "lcoe" , backLabel : " $/kWh"
@@ -78,7 +79,7 @@ export default function FinancialAnalysis({ bessCost  , bessPower}) {
   ]
   const [selectedForm , setSelectedForm] = useState();
   const [errors, setErrors] = React.useState(JSON.parse(JSON.stringify(errorsInitialState)));
-  const [state, setState] = React.useState({
+  const [state, setState] = React.useState({  
     differential: "",
     projectDebt: {
       debt_percent : { value: 30, selectedMeasureUnit: "%" },
@@ -88,7 +89,7 @@ export default function FinancialAnalysis({ bessCost  , bessPower}) {
     initialInvestment: {
       project_length: { value: 20, selectedMeasureUnit: "years" },
       bessCost: bessCost,
-      differential: { value: 30, selectedMeasureUnit: "$" },
+      differential: { value: 30, selectedMeasureUnit: "%" },
       initial_investment: bessCost + 1300
     },
     reserveAccounts: {
@@ -116,8 +117,8 @@ export default function FinancialAnalysis({ bessCost  , bessPower}) {
       property_assessed_pct: 100,
     },
     capacityPayments: {
-      commitmentAmount: { value: 30, selectedMeasureUnit: "%" },
-      commitmentPayment: { value: 30, selectedMeasureUnit: "kW" },
+      commitmentAmount: { value: 30, selectedMeasureUnit: "$" },
+      commitmentPayment: { value: 30, selectedMeasureUnit: "kW" },  
     },
     demandResponse : {
       inputs : 
@@ -139,7 +140,56 @@ export default function FinancialAnalysis({ bessCost  , bessPower}) {
     }
   });
   React.useEffect(() => {
-    setState({ ...state, initialInvestment: { ...state.initialInvestment, bessCost: bessCost, totalInitialInvestment: bessCost + 1300 } });
+    if(bessCost)
+    {
+      setLoaded(false);
+    let initial_investment = 0;
+    console.log({what : state.initialInvestment.differential.value})
+    if(state.initialInvestment.differential.selectedMeasureUnit === "$")
+    {
+      initial_investment = bessCost + state.initialInvestment.differential.value;
+    }
+    else
+    {
+      initial_investment = (bessCost + ((state.initialInvestment.differential.value/100)*bessCost));  
+    }
+    const updatedState = { ...state, initialInvestment: { ...state.initialInvestment, bessCost: bessCost, initial_investment: initial_investment } }
+    console.log({updatedState , bessCost})
+    setState({...updatedState});
+
+      const debt_percent = +state.projectDebt.debt_percent.value;
+      const optimisedPayload = {
+        energy_payment : +state.utilityBill.averageEnergyRate,
+        demand_payment : +state.utilityBill.averageDemandRate,
+        fixed_payment : +state.utilityBill.monthlyFixedAmount,
+      project_length : +state.initialInvestment.project_length.value,
+      initial_investment : +updatedState.initialInvestment.initial_investment,
+      debt_percent : state.projectDebt.debt_percent.selectedMeasureUnit === "%" ? debt_percent : ((debt_percent /+updatedState.initialInvestment.initial_investment )*100),
+      debt_interest_rate : +state.projectDebt.debt_interest_rate,
+      debt_term : +state.projectDebt.debt_term,
+      property_tax_rate : +state.taxes.property_tax_rate,
+      property_assessed_pct: +state.taxes.property_assessed_pct,
+      fed_tax_rate : +state.taxes.fed_tax_rate,
+      state_tax_rate : +state.taxes.state_tax_rate,
+      insurance_rate : +state.taxes.insurance_rate,
+    }
+    makeApiRequest({ method: "post", urlPath: "Fancial_Analysis", body: {...optimisedPayload} }).then(({data , error})=>
+      {
+        if(error)
+        {
+          toast.error("Something went wrong");
+        }
+        else
+        {
+          setResults({...data.data});
+          setLoaded(true);
+          // console.log({data : {...data.data}})
+        }
+      }).catch(()=>
+      {
+        toast.error("Something went wrong");
+      })
+    }
   }, [bessCost])
   React.useEffect(() => {
     const demandResponse = state.demandResponse.inputs;
@@ -154,7 +204,20 @@ export default function FinancialAnalysis({ bessCost  , bessPower}) {
         demandResponse[val].totalDrPayment = demandResponse[val].CommitmentAmount * demandResponse[val].CommitmentPayment;
       }
     })
-    setState({ ...state, initialInvestment: { ...state.initialInvestment, bessCost: bessCost, totalInitialInvestment: bessCost + 1300 }  , demandResponse : { ...state.demandResponse , inputs : {...demandResponse}}});
+    let initial_investment = 0;
+    console.log({what : state.initialInvestment.differential.value})
+    if(state.initialInvestment.differential.selectedMeasureUnit === "$")
+    {
+      initial_investment = bessCost + state.initialInvestment.differential.value;
+    }
+    else
+    {
+      initial_investment = (bessCost + ((state.initialInvestment.differential.value/100)*bessCost));
+    }
+    console.log({initial_investment})
+    const updatedState = { ...state, initialInvestment: { ...state.initialInvestment, bessCost: bessCost, initial_investment: initial_investment }  , demandResponse : { ...state.demandResponse , inputs : {...demandResponse}}};
+    setState({...updatedState});
+    console.log({bessPower  , bessCost} , "this is to debug");
   }, [bessPower])
   const [formHelpers, setFormHelpers] = React.useState(
     {
@@ -167,7 +230,7 @@ export default function FinancialAnalysis({ bessCost  , bessPower}) {
             accessor: "debt_percent",
             multipleMeasureUnits: ["%", "$"],
           },
-          { label: "Loan Term", accessor: "debt_term " },
+          { label: "Loan Term", accessor: "debt_term" },
           { label: "Loan Rate", accessor: "debt_interest_rate" },
         ],
       },
@@ -189,6 +252,35 @@ export default function FinancialAnalysis({ bessCost  , bessPower}) {
             label: "Differential",
             accessor: "differential",
             multipleMeasureUnits: ["%", "$"],
+            onChange : (e)=>
+            {
+              let initial_investment = 0;
+              if(state.initialInvestment.differential.selectedMeasureUnit === "$")
+              {
+                initial_investment = bessCost + e.target.value;
+              }
+              else
+              {
+                initial_investment = (bessCost + ((e.target.value/100)*bessCost));
+              }
+              console.log({   stateGot : state.initialInvestment , state})
+              // const updatedState = { ...state, initialInvestment: { ...state.initialInvestment, initial_investment: initial_investment , differential : {...state.initialInvestment.differential , value : +e.target.value}}}
+              // setState({...updatedState});
+            },
+            onOptionChange : (e)=>
+            {
+              let initial_investment = 0;
+              if(e.target.value === "$")
+              {
+                initial_investment = bessCost + state.initialInvestment.differential.value;
+              }
+              else
+              {
+                initial_investment = (bessCost + ((state.initialInvestment.differential.value/100)*bessCost));
+              }
+              const updatedState = { ...state, initialInvestment: { ...state.initialInvestment, initial_investment: initial_investment , differential : {...state.initialInvestment.differential , selectedMeasureUnit : e.target.value} } }
+              setState({...updatedState});
+            }
           },
           {
             label: "Total",
@@ -402,7 +494,33 @@ export default function FinancialAnalysis({ bessCost  , bessPower}) {
       selectedParameters.map((val) => {
         payload[val] = { ...state[val] };
       })
-      makeApiRequest({ method: "post", urlPath: "Financial_analysis", body: payload })
+      const debt_percent = +state.projectDebt.debt_percent.value;
+
+      const optimisedPayload = {
+        project_length : +state.initialInvestment.project_length.value,
+        initial_investment : +state.initialInvestment.initial_investment,
+        debt_percent : state.projectDebt.debt_percent.selectedMeasureUnit === "%" ? debt_percent : ((debt_percent / bessCost)*100),
+        debt_interest_rate : +state.projectDebt.debt_interest_rate,
+        debt_term : +state.projectDebt.debt_term,
+        property_tax_rate : +state.taxes.property_tax_rate,
+        property_assessed_pct: +state.taxes.property_assessed_pct,
+        fed_tax_rate : +state.taxes.fed_tax_rate,
+        state_tax_rate : +state.taxes.state_tax_rate,
+        insurance_rate : +state.taxes.insurance_rate,
+      }
+      console.log({optimisedPayload})
+      makeApiRequest({ method: "post", urlPath: "Fancial_Analysis", body: {...optimisedPayload} }).then(({data , error})=>
+      {
+        if(error)
+        {
+          toast.error("Something went wrong");
+        }
+        else
+        {
+          setResults({...data.data});
+          console.log({data : {...data.data}})
+        }
+      })
     }
     else {
       toast.error("Please fill all the fields");
@@ -410,7 +528,7 @@ export default function FinancialAnalysis({ bessCost  , bessPower}) {
   }
   return (
     <div className={stylings[theme].financialAnalysis.masterStyle}>
-      {!bessCost ? (
+      {!loaded ? (
         <div className="w-full h-[30rem] flex items-center justify-center">
           <Loader />
         </div>

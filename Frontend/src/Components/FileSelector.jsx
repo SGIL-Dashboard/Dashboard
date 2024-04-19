@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import axios from "axios";
 import { useState } from "react";
 
@@ -16,6 +16,8 @@ import { useContext } from "react";
 import FinancialAnalysis from "./Financial_Analysis/Financial_Analysis";
 const FileSelector = () => {
   const {theme} = useContext(globalContext);
+  const rollDownContianer = useRef(null);
+  const parentRef = useRef(null);
   const [selectedOption, setSelectedOption] = useState("");
   const [selectedInstance , setSelectedInstance] = useState("");
   const [toggle , setToggle] = useState(false);
@@ -142,9 +144,10 @@ const FileSelector = () => {
               }} className={`${stylings[theme].introSection.fileSelectorPack.button} border-r-[0rem]`}>Upload Your Own</button>
           </div>
           <div style={{transform : `translateX(${toggle ? "-50%" : 0})`}} className=" w-[200%] duration-200 ease-in-out h-fit shrink-0 flex items-center justify-start">
-          <div className=" w-[50%] relative shrink-0 gap-[1rem] flex items-center justify-center">
+          <div  className=" w-[50%] relative shrink-0 gap-[1rem] flex items-center justify-center">
         <div onClick={()=>
               {
+                rollDownContianer.current.focus();
                 setRollDown(!rollDown);
               }} className={stylings[theme].introSection.fileSelectorPack.selectedFileContainer}>
         {selectedOption && <img onClick={()=>
@@ -165,11 +168,16 @@ const FileSelector = () => {
             
           </div>
         </div>
-        <motion.div tabIndex={-1}
-          onBlur={()=>
+        <motion.div ref={rollDownContianer} tabIndex={-1}
+          onBlur={(event)=>
             {
-              setRollDown(false);
-            }} variants={{rollDown : {height : `30rem` , transition : {staggerChildren : 0.1 , type : "tween"}} , rollUp : {height : 0}}} animate = {rollDown ? "rollDown" : "rollUp"} className={stylings[theme].introSection.fileSelectorPack.rollDownContainer}>
+              if (rollDownContianer.current && !rollDownContianer.current.contains(event.relatedTarget)) {
+                // onBlur event triggered because the parent element itself lost focus
+                console.log('Parent element lost focus');
+                setRollDown(false);
+              }
+            }} variants={{rollDown : {height : `30rem` , transition : {staggerChildren : 0.1 , type : "tween"}} , rollUp : {height : 0}}} animate = {rollDown ? "rollDown" : "rollUp"} onScroll={(e)=>
+            {e.stopPropagation()}} className={stylings[theme].introSection.fileSelectorPack.rollDownContainer}>
               {fileData.map((val)=>
               {
                 console.log({cal : val.split(".xlsx")[0].replaceAll([" "] , "_")})
