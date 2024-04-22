@@ -213,6 +213,7 @@ export default function RenderForm({
             {formHelper.label}
           </span>
           {formHelper.fields.map((val) => {
+            const afterPoint = `${state[formHelper.accessor][val.accessor]}`.split(".")[1]
             if (val.multipleMeasureUnits) {
               const selectedVal =
                 state[formHelper.accessor][val.accessor].selectedMeasureUnit;
@@ -389,7 +390,7 @@ export default function RenderForm({
                 <div className=" w-full flex items-center justify-center"></div>
                 {val.readOnly ? (
                   <span className={stylings[theme].calculation.readOnlyInputs}>
-                    ${`${insertCommas(`${state[formHelper.accessor][val.accessor]}`.split(".")[0])}.${`${state[formHelper.accessor][val.accessor]}`.split(".")[1]}`}
+                    ${`${insertCommas(`${state[formHelper.accessor][val.accessor]}`.split(".")[0])}${afterPoint?`.${afterPoint}`:""}`}
                   </span>
                 ) : (
                   <input
