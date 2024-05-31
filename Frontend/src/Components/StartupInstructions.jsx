@@ -24,21 +24,21 @@ const StartupInstructions = ({ onHover, onHoverOut }) => {
             <div className={style.itemDesc + " font-semibold"}>
               {item === 1 && (
                 <div className="flex flex-col items-center gap-2">
-                  Select a Building for Analysis or upload your own load
+                  Select a building for analysis or upload your own load
                   profile.
                   <FaHandPointUp size={50} />
                 </div>
               )}
               {item === 2 && (
                 <div className="flex flex-col items-center gap-2">
-                Adjust BESS inputs if necessary, then click Submit.
+                Adjust BESS inputs if necessary, then click submit.
                 <LuSettings2 size={50} />
                 </div>
               )}
               {item === 3 && (
                 <div className="flex flex-col items-center gap-2">
                   Run financial analysis, demand forecasting, and load profile
-                  models
+                  models.
                   <FaRunning size={50} />
                 </div>
               )}
