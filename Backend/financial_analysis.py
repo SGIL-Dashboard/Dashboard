@@ -43,7 +43,7 @@ paths to load profiles for each building (copy/paste in filepath)
 
 # gets the excel file from list above, and parses the data on the PyLoad sheet
 
-filename = "Administration Building.xlsx"
+filename = "AdminPyLoad.xlsx"
 data_folder = "data"
 results_folder = "results"
 directory = pathlib.Path(__file__).parent.resolve()
@@ -220,7 +220,7 @@ print("BESS Footprint (ft^2): ", BESS_footprint)
 
 #user inputs
 project_length = 20
-initial_investment = 100000  
+initial_investment = 50000000  
 debt_percent = 30 #loan rate
 debt_interest_rate = 6
 debt_term = 18 # loan term
@@ -433,8 +433,12 @@ for year_info in schedule:
 #Reservation Calc DLRP (Tier 2)	    5.00	    5
 def capacity_payment_calc():
     return 0
+
+
 #----------------------End Capacity Payment ----------------------------------------------    
+    
 #-----------------------Start Payback Calc --------------------------------------------------
+    
 # rows = ['Cash Flow', 'Cummulative Cash Flow','DR Capacity Revenue', 'Bill Savings','OM Expense', 'Insurance', 'Property Tax', 'EBITDA', 'Interest', 'Principal',  'Depreciation','State Tax', 'Fed Tax']    
 def calculate_payback(project_length,debt_term, financial_df):
     cash_flow = 0
@@ -530,9 +534,13 @@ project_cashflows.to_excel(os.path.join(directory, results_folder, "project_cash
 
 yearly_cash_flows = project_cashflows.iloc[0].values
 cumulative_cash_flow = project_cashflows.iloc[1].values
+positive_cashflow_indices = np.where(cumulative_cash_flow > 0)[0]
 npv = npf.npv(discount_rate, [initial_investment] + yearly_cash_flows)
 irr = npf.irr([initial_investment] + yearly_cash_flows)
-payback_period = np.where(cumulative_cash_flow > 0)[0][0]  
+if positive_cashflow_indices.size > 0:
+    payback_period = np.where(cumulative_cash_flow > 0)[0][0]
+else:
+    payback_period = "N/A"      
 total_lifecycle_costs = -np.sum([initial_investment] + yearly_cash_flows)  # Total costs (negative sign for cash out)
 lcoe = total_lifecycle_costs / total_energy_dispatched_kWh  # Cost per kWh
 bill_savings_yr1 = project_cashflows.iloc[3,1]
