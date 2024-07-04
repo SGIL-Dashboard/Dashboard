@@ -12,7 +12,7 @@ import { Toaster } from "react-hot-toast";
 import { assets } from "./UTILS/UTILS_Assets";
 import { stylings } from "./UTILS/UTILS_STYLES";
 const App = () => {
-  const [theme , setTheme] = useState(localStorage.getItem("theme") !== "dark" ? "light" : "dark");
+  const [theme , setTheme] = useState(localStorage.getItem("theme") !== "dark" ? 'light' : "dark");
   React.useEffect(()=>
   {
     localStorage.setItem("theme" , theme);
@@ -37,7 +37,7 @@ const App = () => {
       <img src={assets.logo} alt="img" className=' w-[3rem]'/>
       <div className=" flex flex-col items-start">
      <span  className={`${stylings[theme].navbar.text} text-[1rem]`}>Smart Grid Interdependencies Laboratory</span>
-     <span  className={`${stylings[theme].navbar.text} text-[1rem]`}>SGIL Load Analysis and Battery Sizing (LABS)</span>
+     <span  className={`${stylings[theme].navbar.text} text-[1rem]`}>SGIL Battery Energy Storage Sizing  </span>
       </div>
       </div>
       <div className="flex flex-col flex-grow items-center justify-center">

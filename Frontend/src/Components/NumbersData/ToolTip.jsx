@@ -4,8 +4,8 @@ import { stylings } from '../../UTILS/UTILS_STYLES'
 export default function ToolTip({text , left}) {
   const {theme} = React.useContext(globalContext)
   return (
-    <div className={left ? stylings[theme].toolTip.left : stylings[theme].toolTip.middle + ""}>
-     <span className=' font-bold text-white'>{text}</span>
+    <div className={left ? stylings[theme].toolTip.left : stylings[theme].toolTip.middle}>
+     <span className=' whitespace-nowrap font-bold text-white'>{text}</span>
     </div>
   )
 }

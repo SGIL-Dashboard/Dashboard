@@ -13,7 +13,7 @@ export default function Navbar() {
       <img src={assets.logo} alt="img" className=' w-[5rem]'/>
       <div className=" flex flex-col items-start">
      <span  className={stylings[theme].navbar.text}>Smart Grid Interdependencies Laboratory</span>
-     <span  className={stylings[theme].navbar.text}>SGIL Load Analysis and Battery Sizing (LABS)</span>
+     <span  className={stylings[theme].navbar.text}>SGIL Battery Energy Storage Sizing  </span>
       </div>
      </div>
      <button onClick={()=>

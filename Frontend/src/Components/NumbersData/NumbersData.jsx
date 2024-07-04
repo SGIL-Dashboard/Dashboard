@@ -38,24 +38,14 @@ export default function NumbersData({
         label: "BESS Depth of Discharge (%)",
         accessor: "depthDischarge",
         max: 100,
-        tooltip:
-          "The percentage of a battery energy storage system's (BESS) total capacity that has been discharged, indicating how much of the stored energy has been used. Adjusting the depth of discharge changes the recommended BESS Capacity size.",
       },
       {
         // label: "BESS Footprint (inSUP{2}/ kWh)",
         label: "BESS Footprint (in²/ kWh)",
         accessor: "footprint",
         max: 100,
-        tooltip:
-          "The amount of space a BESS occupies per unit of energy storage capacity (kWh). A lower footprint indicates a more space-efficient system.",
       },
-      {
-        label: "BESS Duration",
-        accessor: "selectInput",
-        max: 4,
-        tooltip: `The length of time a BESS can deliver its rated power (kW) based on its total energy capacity (kWh). Changing the battery duration, updates the battery power:
-      BESS Power = BESS Capacity/ BESS Duration`,
-      },
+      { label: "BESS Duration", accessor: "selectInput", max: 4 },
     ],
     floatInputs: [
       { label: "BESS Capital Cost ($/kWh)", accessor: "floatInput1" },
@@ -170,7 +160,7 @@ export default function NumbersData({
                               return <span>{val}</span>;
                             })
                           : val.label}
-                        <ToolTip text={val.tooltip} />
+                        <ToolTip text={val.label} />
                       </label>
                       <div className="w-full flex items-center gap-[.5rem]">
                         <input
@@ -195,13 +185,11 @@ export default function NumbersData({
                 })}
               </div>
               <div className=" w-[45%] flex flex-col gap-[2rem]">
-                <div className="flex items-start justify-start overflow-x-clip flex-col w-full shrink-0">
+                <div className="flex items-start justify-start overflow-hidden flex-col w-full shrink-0">
                   <span className=" text-[1.1rem] relative flex items-center text-slate-400">
                     <label htmlFor="" className=" relative">
                       {"BESS Capital Cost ($/"}
-                      <ToolTip
-                        text={`The initial expenses associated with purchasing and installing a BESS, including the cost of the batteries themselves, associated hardware, installation, and permitting. BESS Cost = $/kWh * BESS Capacity + $/kW * BESS Power`}
-                      />
+                      <ToolTip text={"BESS Capital Cost"} />
                     </label>
                     <select
                       value={capitalCostSelection}
@@ -232,7 +220,7 @@ export default function NumbersData({
                         })`,
                         gap: capitalCostSelection === "Both" ? "2rem" : 0,
                       }}
-                      className="w-[200%] h-[2.7rem] shrink-0 flex duration-300 ease-in-out items-center justify-start"
+                      className="w-[200%] h-[2.7rem] shrink-0 flex  duration-300 ease-in-out items-center justify-start"
                     >
                       <input
                         style={{
@@ -271,14 +259,11 @@ export default function NumbersData({
                     <div className=" w-full h-[2.7rem] shrink-0"></div>
                   )}
                 </div>
-                <div className="flex items-start justify-start overflow-x-clip flex-col w-full shrink-0">
+                <div className="flex items-start justify-start overflow-hidden flex-col w-full shrink-0">
                   <span className=" text-[1.1rem] items-center   flex text-slate-400">
                     <label className=" relative">
                       {"BESS O&M Cost ($/"}
-                      <ToolTip
-                        text={`The ongoing costs associated with operating and maintaining a BESS, including labor, materials, and repairs over its lifetime.
-                      BESS O&M Cost = $/kWh * BESS Capacity + $/kW * BESS Power`}
-                      />
+                      <ToolTip text={"BESS O&M Cost"} />
                     </label>
                     <select
                       value={oAndMCostSelection}
@@ -345,15 +330,11 @@ export default function NumbersData({
                     <div className=" w-full h-[2.7rem]"></div>
                   )}
                 </div>
-                <div className="flex items-start justify-start overflow-x-clip flex-col w-full shrink-0">
+                <div className="flex items-start justify-start overflow-hidden flex-col w-full shrink-0">
                   <span className=" text-[1.1rem] items-center   flex text-slate-400">
-                    <label className="relative" htmlFor="">
+                    <label className=" relative" htmlFor="">
                       {"BESS Capacity ("}
-                      <ToolTip
-                        text={`The total amount of energy, typically measured in kilowatt-hours (kWh), that a BESS can store or deliver.
-                        The recommended BESS Capacity is based on the load profile to determine the smallest battery needed to shave peak demand the highest daily demand average for the year.
-                        `}
-                      />
+                      <ToolTip text={"BESS Capacity"} />
                     </label>
                     <select
                       value={recSelected}
@@ -422,7 +403,9 @@ export default function NumbersData({
               <>
                 <div className=" w-full flex flex-wrap justify-between gap-y-[4rem]">
                   {valuesRenderHelpers.map((val, id) => {
-                    const afterPoint = `${bessOut[val.accessor]}`.split(".")[1];
+                    const afterPoint = `${
+                      bessOut[val.accessor]
+                    }`.split(".")[1];
                     const words = `${val.label}`.split(
                       patterns.SUPERSCRIPTPATTER
                     );
@@ -450,6 +433,7 @@ export default function NumbersData({
                           <label className=" whitespace-nowrap text-[1rem] text-slate-400">
                             {startingPos !== -1
                               ? words.map((val, ids) => {
+                                  
                                   console.log({
                                     valllll: `${bessOut[val.accessor]}`.split(
                                       "."
@@ -471,7 +455,11 @@ export default function NumbersData({
                             {val.accessor === "BESS_cost"
                               ? `${"$"}${insertCommas(
                                   `${bessOut[val.accessor]}`.split(".")[0]
-                                )}${afterPoint ? `.${afterPoint}` : ""}`
+                                )}${
+                                  afterPoint
+                                    ? `.${afterPoint}`
+                                    : ""
+                                }`
                               : bessOut[val.accessor]}
                           </span>
                         </div>
