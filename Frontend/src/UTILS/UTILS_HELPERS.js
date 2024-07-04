@@ -13,8 +13,8 @@ export const insertCommas = (number)=>
 export const makeApiRequest = async({method , urlPath , body , encryptedKeys , convertToFormData , token})=>
 {
  let config = {};
-//  const baseApiUrl = "https://api.sgillabs.com/";
- const baseApiUrl = "http://127.0.0.1:5000/";
+ const baseApiUrl = "https://api.sgillabs.com/";
+ // const baseApiUrl = "http://127.0.0.1:5000/";
  config.method = method;
  config.url = `${baseApiUrl}${urlPath}`;
  if(token)
