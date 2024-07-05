@@ -14,7 +14,7 @@ export default function Results({results , renderResultsHelper}) {
       return<div className={`${index === 0 ? "w-[100%]" : "w-[48%]"} p-[0.7em] shrink-0 flex flex-col items-center`}>
        {/* <div className=" flex flex-col items-start"> */}
        <span className=' text-[1.3rem] text-slate-400'><label className='relative'>{val.label}
-       <ToolTip text={val.label} left={true}/>
+       <ToolTip text={val.tooltip} left={true}/>
        </label></span>
        <span className={stylings[theme].financialAnalysis.formRender.value}>{amtInDollars.includes(val.accessor) ? `$${insertCommas(results[val.accessor])}` : results[val.accessor]}{val.backLabel ? <span className=' text-[0.9rem] text-slate-400 font-normal'>{val.backLabel}</span> : ""}</span>
        {/* </div> */}
