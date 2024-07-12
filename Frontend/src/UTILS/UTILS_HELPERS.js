@@ -1,6 +1,7 @@
 import axios from "axios";
 import CryptoJS from "crypto-js";
 import toast from "react-hot-toast";
+
 const encrypt = (text  , key  = "salt")=>CryptoJS.AES.encrypt(text,key).toString();
 const decrypt = ( cipherText  , key  = "salt")=>CryptoJS.AES.decrypt(cipherText,key).toString(CryptoJS.enc.Utf8);
 export const insertCommas = (number)=>
@@ -13,8 +14,8 @@ export const insertCommas = (number)=>
 export const makeApiRequest = async({method , urlPath , body , encryptedKeys , convertToFormData , token})=>
 {
  let config = {};
- const baseApiUrl = "https://api.sgillabs.com/";
  // const baseApiUrl = "http://127.0.0.1:5000/";
+ const baseApiUrl = "https://api.sgillabs.com/";
  config.method = method;
  config.url = `${baseApiUrl}${urlPath}`;
  if(token)
@@ -60,7 +61,6 @@ export const makeApiRequest = async({method , urlPath , body , encryptedKeys , c
  let data , error;
  try
  {
-  data = await axios(config);
 		console.log({data})
  }
  catch(err)
