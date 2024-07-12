@@ -662,7 +662,7 @@ export default function FinancialAnalysis({ bessCost, bessPower }) {
       console.log({ optimisedPayload });
       makeApiRequest({
         method: "post",
-        urlPath: "Calculate_Fancial_Analysis",
+        urlPath: "cal_Fancial_Analysis",
         body: { ...optimisedPayload },
       }).then(({ data, error }) => {
         if (error) {
