@@ -44,7 +44,6 @@ const Bess = () => {
         "https://api.sgillabs.com/bess_calculation",
         { inputs }
       );
-      // console.log(response.data);
       setBessOut(response.data);
     } catch (error) {
       console.error("Error fetching  data:", error);
@@ -53,9 +52,8 @@ const Bess = () => {
 
   const handleSubmit = () => {
     // Perform any logic you need when the user submits the form
-    console.log("Form submitted:", inputs);
+
     // This effect will run only when the user clicks the submit button
-    console.log("Effect triggered:", inputs);
 
     calculateBess();
   };

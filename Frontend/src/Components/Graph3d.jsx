@@ -17,7 +17,6 @@ const Graph3d = () => {
         const response = await axios.get(
           "https://api.sgillabs.com/give_comp_3D_monthly_plot"
         );
-        // console.log("data=>", response.data);
         const month_data = JSON.parse(response.data);
         setMonth3Data(month_data);
       } catch (error) {
@@ -33,7 +32,6 @@ const Graph3d = () => {
         const response = await axios.get(
           "https://api.sgillabs.com/give_comp_3D_daily_plot"
         );
-        // console.log("data=>", response.data);
         const daily_data = JSON.parse(response.data);
         setDaily3Data(daily_data);
       } catch (error) {

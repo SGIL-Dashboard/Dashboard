@@ -10,7 +10,6 @@ export default function RenderForm({
   val,
   bessPower,
 }) {
-  console.log({ formHelper, errors });
   const { theme } = React.useContext(globalContext);
   const fieldsLen = formHelper?.fields?.length;
   const parentStylings = errors?.haveError
@@ -238,7 +237,6 @@ export default function RenderForm({
                             //   val.onOptionChange(e);
                             //   return;
                             // }
-                            console.log({val});
                             if (
                               formHelper.accessor === "initialInvestment" &&
                               val.accessor === "differential"
@@ -299,7 +297,6 @@ export default function RenderForm({
                       <div className=" w-[100%] duration-300 ease-in-out shrink-0 flex items-center justify-start">
                         <input
                           onChange={(e) => {
-                            console.log({ state }, "inner");
                             // if (val.onChange) {
                             //   val.onChange(e);
                             //   return;
@@ -309,12 +306,6 @@ export default function RenderForm({
                                 formHelper.accessor === "initialInvestment" &&
                                 val.accessor === "differential"
                               ) {
-                                console.log({
-                                  measureUnit:
-                                    state[formHelper.accessor][val.accessor]
-                                      .selectedMeasureUnit,
-                                  val,
-                                });
                                   const bessCost =
                                     +state.initialInvestment.bessCost;
                                   const percent = +e.target.value;

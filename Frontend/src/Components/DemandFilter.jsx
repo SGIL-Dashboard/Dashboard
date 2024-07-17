@@ -50,20 +50,8 @@ const DemandFilter = () => {
         );
         // const data = JSON.parse(response.data);
         // setPlotData(data);
-
         const raw_data = response.data;
-
-        console.log(
-          "list type",
-          raw_data,
-          typeof raw_data,
-          typeof raw_data["PeakDailyDemand"]
-        );
-        // console.log("we are", raw_data);
-
-        setPlotData(response.data);
-
-        // setPlotData(raw_data);
+        setPlotData(raw_data);
       } catch (error) {
         console.error("Error fetching plot data:", error);
       }
@@ -109,7 +97,6 @@ const DemandFilter = () => {
           marker: { color: "orange" },
         },
       ];
-      console.log("our bar graph data", data);
       setBarGraphData(data);
     }
   }, [plotData]);
@@ -122,7 +109,6 @@ const DemandFilter = () => {
     height: "600",
   };
 
-  // console.log("data fro graph==>,", data);
   if (loading) {
     <div>
       <h2

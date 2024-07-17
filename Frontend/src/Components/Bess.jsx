@@ -47,7 +47,6 @@ const Bess = () => {
         "https://api.sgillabs.com/bess_calculation",
         { inputs }
       );
-      // console.log(response.data);
       setBessOut(response.data);
     } catch (error) {
       console.error("Error fetching  data:", error);
@@ -56,9 +55,8 @@ const Bess = () => {
 
   const handleSubmit = () => {
     // Perform any logic you need when the user submits the form
-    console.log("Form submitted:", inputs);
+
     // This effect will run only when the user clicks the submit button
-    console.log("Effect triggered:", inputs);
 
     calculateBess();
   };
@@ -73,7 +71,6 @@ const Bess = () => {
           const response = await axios.get(
             "https://api.sgillabs.com/give_comp_3D_monthly_plot"
           );
-        // console.log("data=>", response.data);
         const month_data = JSON.parse(response.data);
         setMonth3Data(month_data);
       } catch (error) {
@@ -89,7 +86,6 @@ const Bess = () => {
         const response = await axios.get(
           "https://api.sgillabs.com/give_comp_3D_daily_plot"
         );
-        // console.log("data=>", response.data);
         const daily_data = JSON.parse(response.data);
         setDaily3Data(daily_data);
       } catch (error) {

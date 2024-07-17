@@ -53,7 +53,6 @@ const PlotComponent = () => {
         const response = await axios.get(
           "https://api.sgillabs.com/give_comp_3D_monthly_plot"
         );
-        console.log("data=>", response.data);
         const month_data = JSON.parse(response.data);
         setMonth3Data(month_data);
       } catch (error) {

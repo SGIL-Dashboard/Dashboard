@@ -13,8 +13,8 @@ export const insertCommas = (number)=>
 export const makeApiRequest = async({method , urlPath , body , encryptedKeys , convertToFormData , token})=>
 {
  let config = {};
-//  const baseApiUrl = "https://api.sgillabs.com/";
- const baseApiUrl = "http://127.0.0.1:5000/";
+ const baseApiUrl = "https://api.sgillabs.com/";
+//  const baseApiUrl = "http://127.0.0.1:5000/";
  config.method = method;
  config.url = `${baseApiUrl}${urlPath}`;
  if(token)
@@ -61,11 +61,9 @@ export const makeApiRequest = async({method , urlPath , body , encryptedKeys , c
  try
  {
   data = await axios(config);
-		console.log({data})
  }
  catch(err)
  {
-		console.log({err})
   error = err;
  }
  return{error , data}
@@ -75,8 +73,7 @@ export const handleFileCheck = (file)=>
 	const allowedFileExtensions = ["xlsx"];
 	
 	const splittedArray = file.name.split(".");
-	console.log({fielSize : file.size})
-	// console.log(allowedFileExtensions.includes(file.name.split(".")[1].toLowerCase()) , "thi is check" , splittedArray[splittedArray.length-1].toLowerCase());
+  
 	const result = allowedFileExtensions.includes(splittedArray[splittedArray.length-1].toLowerCase());
 	if(!result)
 	{

@@ -46,7 +46,6 @@ const FileSelector = () => {
     const files = event.target.files;
     // Process the selected files or get the list of filenames
     const filenames = Array.from(files).map((file) => file.name);
-    console.log(filenames);
   };
   const fetchData = async () => {
     try {
@@ -54,7 +53,6 @@ const FileSelector = () => {
         "https://api.sgillabs.com/get_all_files"
       );
       const data = response.data.all_file;
-      console.log("dataof file", data);
       setFileData(data);
     } catch (error) {
       console.error("Error fetching  data:", error);
@@ -67,7 +65,6 @@ const FileSelector = () => {
         "https://api.sgillabs.com/file_selection",
         { selectedOption, UID: getUniqueId() }
       );
-      console.log(response, selectedOption);
       setDfData(response.data.status);
       setSelectionUpdated(true);
       // window.location.reload();
@@ -216,12 +213,6 @@ const FileSelector = () => {
                     <img
                       onClick={() => {
                         setExpandImg(true);
-                        console.log({
-                          val: selectedInstance
-                            .split(".xlsx")[0]
-                            .replaceAll(" ", "_")
-                            .replaceAll("-", "_"),
-                        });
                       }}
                       src={
                         assets[
@@ -287,7 +278,6 @@ const FileSelector = () => {
                       !rollDownContianer.current.contains(event.relatedTarget)
                     ) {
                       // onBlur event triggered because the parent element itself lost focus
-                      console.log("Parent element lost focus");
                       setRollDown(false);
                     }
                   }}
@@ -308,9 +298,6 @@ const FileSelector = () => {
                   }
                 >
                   {fileData.map((val) => {
-                    console.log({
-                      cal: val.split(".xlsx")[0].replaceAll([" "], "_"),
-                    });
                     return (
                       <motion.button
                         variants={{

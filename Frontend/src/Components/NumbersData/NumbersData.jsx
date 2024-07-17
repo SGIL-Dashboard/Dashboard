@@ -119,10 +119,6 @@ export default function NumbersData({
       setNumberLoaded(false);
     }
   }, [selectionUpdated]);
-  console.log({
-    calc: capitalCostSelection === "kWh" || capitalCostSelection === "Both",
-    capitalCostSelection,
-  });
   return (
     <div className={stylings[theme].calculation.parent}>
       {
@@ -434,13 +430,7 @@ export default function NumbersData({
                       .split("SUP{")
                       .join("")
                       .split("}")[0];
-                    console.log({ words });
-                    console.log({
-                      label: val.label,
-                      startingPos,
-                      value,
-                      words,
-                    });
+                   
                     return (
                       <div
                         key={id}
@@ -450,11 +440,6 @@ export default function NumbersData({
                           <label className=" whitespace-nowrap text-[1rem] text-slate-400">
                             {startingPos !== -1
                               ? words.map((val, ids) => {
-                                  console.log({
-                                    valllll: `${bessOut[val.accessor]}`.split(
-                                      "."
-                                    )[1],
-                                  });
                                   if (ids === 0) {
                                     return (
                                       <span>

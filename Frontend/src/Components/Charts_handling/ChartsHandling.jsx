@@ -100,7 +100,6 @@ export default function ChartsHandling({ selectionUpdated, selectedOption }) {
         ),
       },
     ];
-    console.log("our bar graph data", data);
     return data;
   };
 
@@ -140,7 +139,6 @@ export default function ChartsHandling({ selectionUpdated, selectedOption }) {
   };
   React.useEffect(() => {
     if (selectionUpdated) {
-      console.log("this is selection oneone", { selectionUpdated });
       handleFetchData();
     } else {
       setLoaded(false);

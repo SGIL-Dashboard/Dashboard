@@ -23,7 +23,6 @@ const BarGraph = () => {
       marker: { color: "orange" },
     },
   ];
-  console.log("bar graph");
   const layout = {
     title: "Stacked Bar Graph Example",
     xaxis: { title: "Categories" },

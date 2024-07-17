@@ -49,6 +49,7 @@ export default function FinancialAnalysis({ bessCost, bessPower }) {
     },
   };
   const [loaded, setLoaded] = useState(false);
+  const [isCalculating, setIsCalculating] = useState(false);
   const [results, setResults] = React.useState({
     npv: 100000,
     irr: 14,
@@ -103,11 +104,7 @@ export default function FinancialAnalysis({ bessCost, bessPower }) {
         "The average cost per unit of energy produced, calculated over the lifetime of the battery.",
     },
   ];
-  const [selectedForm, setSelectedForm] = useState();
-  const [errors, setErrors] = React.useState(
-    JSON.parse(JSON.stringify(errorsInitialState))
-  );
-  const [state, setState] = React.useState({
+  const initial_param_values = {
     differential: "",
     projectDebt: {
       debt_percent: { value: 30, selectedMeasureUnit: "%" },
@@ -213,12 +210,16 @@ export default function FinancialAnalysis({ bessCost, bessPower }) {
       },
       selectedCommetmentAmount: "%",
     },
-  });
+  };
+  const [selectedForm, setSelectedForm] = useState();
+  const [errors, setErrors] = React.useState(
+    JSON.parse(JSON.stringify(errorsInitialState))
+  );
+  const [state, setState] = React.useState(initial_param_values);
   React.useEffect(() => {
     if (bessCost) {
       setLoaded(false);
       let initial_investment = 0;
-      console.log({ what: state.initialInvestment.differential.value });
       if (state.initialInvestment.differential.selectedMeasureUnit === "$") {
         initial_investment =
           bessCost + state.initialInvestment.differential.value;
@@ -235,7 +236,6 @@ export default function FinancialAnalysis({ bessCost, bessPower }) {
           initial_investment: initial_investment,
         },
       };
-      console.log({ updatedState, bessCost });
       setState({ ...updatedState });
 
       const debt_percent = +state.projectDebt.debt_percent.value;
@@ -270,7 +270,6 @@ export default function FinancialAnalysis({ bessCost, bessPower }) {
           } else {
             setResults({ ...data.data });
             setLoaded(true);
-            // console.log({data : {...data.data}})
           }
         })
         .catch(() => {
@@ -293,7 +292,6 @@ export default function FinancialAnalysis({ bessCost, bessPower }) {
       }
     });
     let initial_investment = 0;
-    console.log({ what: state.initialInvestment.differential.value });
     if (state.initialInvestment.differential.selectedMeasureUnit === "$") {
       initial_investment =
         bessCost + state.initialInvestment.differential.value;
@@ -302,7 +300,6 @@ export default function FinancialAnalysis({ bessCost, bessPower }) {
         bessCost +
         (state.initialInvestment.differential.value / 100) * bessCost;
     }
-    console.log({ initial_investment });
     const updatedState = {
       ...state,
       initialInvestment: {
@@ -316,7 +313,6 @@ export default function FinancialAnalysis({ bessCost, bessPower }) {
       },
     };
     setState({ ...updatedState });
-    console.log({ bessPower, bessCost }, "this is to debug");
   }, [bessPower]);
   const [formHelpers, setFormHelpers] = React.useState({
     projectDebt: {
@@ -359,7 +355,6 @@ export default function FinancialAnalysis({ bessCost, bessPower }) {
             } else {
               initial_investment = bessCost + (e.target.value / 100) * bessCost;
             }
-            console.log({ stateGot: state.initialInvestment, state });
             // const updatedState = { ...state, initialInvestment: { ...state.initialInvestment, initial_investment: initial_investment , differential : {...state.initialInvestment.differential , value : +e.target.value}}}
             // setState({...updatedState});
           },
@@ -592,6 +587,10 @@ export default function FinancialAnalysis({ bessCost, bessPower }) {
     const existingParameters = new Set(selectedParameters);
     if (!makeSelection) {
       existingParameters.delete(value);
+      setState({
+        ...state,
+        [value]: initial_param_values[value],
+      });
       if (selectedForm === value) {
         setSelectedForm(undefined);
       }
@@ -602,6 +601,7 @@ export default function FinancialAnalysis({ bessCost, bessPower }) {
     setSelectedParameters([...existingParameters]);
   };
   const handleSubmit = () => {
+    setIsCalculating(true);
     let errors = JSON.parse(JSON.stringify(errorsInitialState));
     let foundError = false;
     selectedParameters.map((val) => {
@@ -659,7 +659,6 @@ export default function FinancialAnalysis({ bessCost, bessPower }) {
         state_tax_rate: +state.taxes.state_tax_rate,
         insurance_rate: +state.taxes.insurance_rate,
       };
-      console.log({ optimisedPayload });
       makeApiRequest({
         method: "post",
         urlPath: "Fancial_Analysis",
@@ -669,7 +668,7 @@ export default function FinancialAnalysis({ bessCost, bessPower }) {
           toast.error("Something went wrong");
         } else {
           setResults({ ...data.data });
-          console.log({ data: { ...data.data } });
+          setIsCalculating(false);
         }
       });
     } else {
@@ -766,18 +765,29 @@ export default function FinancialAnalysis({ bessCost, bessPower }) {
                 );
               })}
               <button
+                disabled={isCalculating}
                 onClick={() => {
                   handleSubmit();
                 }}
                 className={stylings[theme].financialAnalysis.calculateButton}
               >
-                Calculate
+                {isCalculating ? (
+                  <div className=" w-[2rem] h-[2rem] border-[0.15rem] border-blue-900 rounded-full shrink-0 animate-spin border-y-white"></div>
+                ) : (
+                  "Calculate"
+                )}
               </button>
             </div>
-            <Results
-              results={results}
-              renderResultsHelper={renderResultsHelper}
-            />
+            {isCalculating ? (
+              <div className="w-[40%] h-[30rem] flex items-center justify-center">
+                <Loader />
+              </div>
+            ) : (
+              <Results
+                results={results}
+                renderResultsHelper={renderResultsHelper}
+              />
+            )}
             {selectedForm ? (
               <RenderForm
                 bessPower={bessPower}

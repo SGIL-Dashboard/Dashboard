@@ -14,7 +14,6 @@ const options = [
 const MultiSelectDropdown = () => {
   const handleChange = (selectedOptions) => {
     // Do something with the selected days, e.g., filter data
-    console.log("Selected days:", selectedOptions);
   };
 
   return (
@@ -54,7 +53,6 @@ const Filters = () => {
   return (
     <div>
       <MultiSelectDropdown />
-      
     </div>
   );
 };
