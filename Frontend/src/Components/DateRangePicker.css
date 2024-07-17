@@ -1,0 +1,26 @@
+.date-range-picker-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.date-picker-label {
+  margin-bottom: 10px;
+  font-size: 18px;
+}
+
+.custom-date-picker {
+  font-size: 16px;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  outline: none;
+  cursor: pointer;
+}
+
+.custom-date-picker:hover {
+  border-color: #3498db; /* Highlight border color on hover */
+}
+
+

@@ -1,0 +1,118 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+.TT
+{
+  width: 15vw;
+  position: absolute;
+  // display: none;
+  visibility: hidden;
+  opacity: 0;
+  top : 1.7rem;
+  left: 50%;
+  transition: 0s ;
+  // transform: translateX(-50%);
+  z-index: 200;
+}
+.TTL
+{
+  left : 100%;
+  // transform: translateX(-50%);
+}
+
+* ::-webkit-scrollbar-track
+{
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+	border-radius: 10px;
+	background-color: #F5F5F5;
+}
+
+* ::-webkit-scrollbar
+{
+	width: 9px;
+	background-color: #F5F5F5;
+}
+
+* ::-webkit-scrollbar-thumb  
+{
+	border-radius: 10px;
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+	background-color: #DBEAFE;
+}
+
+
+
+// .fileselectorDark::-webkit-scrollbar-track
+// {
+// 	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+// 	border-radius: 10px;
+// 	background-color: #737272;
+// }
+// .fileselectorDark::-webkit-scrollbar
+// {
+// 	width: 12px;
+// 	background-color: #737272;
+// }
+
+// .fileselectorDark::-webkit-scrollbar-thumb  
+// {
+// 	border-radius: 10px;
+// 	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+// 	background-color: #c5c5c5;
+// }
+.darkDateInput::-webkit-datetime-edit-fields-wrapper, 
+.darkDateInput::-webkit-datetime-edit-fields-wrapper {
+  color: white; /* Change this to your desired color */
+}
+label:hover .TT
+{
+  // display: flex;
+  visibility: visible;
+  opacity: 1;
+  transition: all 0.5s step-end;
+}
+.selectNone
+{
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+    -khtml-user-select: none; /* Konqueror HTML */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none; 
+}
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+.styledTextInputs + label
+{
+  position: absolute;
+  transition: all 0.3s ease-in-out;
+  left: .5rem;
+  top: 0;
+}
+.styledTextInputs:focus+label
+{
+  top: -1.15rem;
+  color : rgb(154, 152, 152)
+}
+.styledTextInputs:not(:placeholder-shown)+label
+{
+  top: -1.15rem;
+  color : rgb(154, 152, 152)
+}
+input.ULInput::-webkit-outer-spin-button,
+input.ULInput::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
