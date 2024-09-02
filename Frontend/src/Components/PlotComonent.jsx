@@ -19,7 +19,7 @@ const PlotComponent = () => {
     // const fetch3dDailyData = async () => {
     //   try {
     //     const response = await axios.get(
-    //       "http://api.sgillabs.com/comp_3D_daily_plot"
+    //       "https://api.sgillabs.com/comp_3D_daily_plot"
     //     );
     //     const data = JSON.parse(response.data);
     //     set3DailyData(data);
@@ -29,7 +29,7 @@ const PlotComponent = () => {
     // };
     const fetchData = async () => {
       try {
-        const response = await axios.get("http://api.sgillabs.com/get_plot_data");
+        const response = await axios.get("https://api.sgillabs.com/get_plot_data");
         const data = JSON.parse(response.data);
         setPlotData(data);
       } catch (error) {
@@ -39,7 +39,7 @@ const PlotComponent = () => {
     // const fetchMonthData = async () => {
     //   try {
     //     const response = await axios.get(
-    //       "http://api.sgillabs.com/fig_monthly_Demand_data"
+    //       "https://api.sgillabs.com/fig_monthly_Demand_data"
     //     );
     //     const month_data = JSON.parse(response.data);
     //     setMonthData(month_data);
@@ -51,7 +51,7 @@ const PlotComponent = () => {
     const fetch3dMonthlyData = async () => {
       try {
         const response = await axios.get(
-          "http://api.sgillabs.com/give_comp_3D_monthly_plot"
+          "https://api.sgillabs.com/give_comp_3D_monthly_plot"
         );
         const month_data = JSON.parse(response.data);
         setMonth3Data(month_data);

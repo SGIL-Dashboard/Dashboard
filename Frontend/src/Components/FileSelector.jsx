@@ -51,7 +51,7 @@ const FileSelector = () => {
   };
   const fetchData = async () => {
     try {
-      const response = await axios.get("http://api.sgillabs.com/get_all_files");
+      const response = await axios.get("https://api.sgillabs.com/get_all_files");
       const data = response.data.all_file;
       setFileData(data);
     } catch (error) {
@@ -62,7 +62,7 @@ const FileSelector = () => {
     try {
       setDfData("");
       const response = await axios.post(
-        "http://api.sgillabs.com/file_selection",
+        "https://api.sgillabs.com/file_selection",
         { selectedOption, UID: getUniqueId() }
       );
       setDfData(response.data.status);
@@ -149,7 +149,7 @@ const FileSelector = () => {
 
       // Make the API request to upload the file
       const response = await axios.post(
-        "http://api.sgillabs.com/file_selection",
+        "https://api.sgillabs.com/file_selection",
         formData,
         {
           headers: {

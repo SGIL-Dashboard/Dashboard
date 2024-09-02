@@ -22,7 +22,7 @@ export const makeApiRequest = async ({
   token,
 }) => {
   let config = {};
-  const baseApiUrl = "http://api.sgillabs.com/";
+  const baseApiUrl = "https://api.sgillabs.com/";
   config.method = method;
   config.url = `${baseApiUrl}${urlPath}`;
   if (token) {

@@ -46,7 +46,7 @@ const DemandFilter = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          "http://api.sgillabs.com/get_demand_plot_data"
+          "https://api.sgillabs.com/get_demand_plot_data"
         );
         // const data = JSON.parse(response.data);
         // setPlotData(data);
@@ -60,7 +60,7 @@ const DemandFilter = () => {
     const fetchMonthData = async () => {
       try {
         const response = await axios.post(
-          "http://api.sgillabs.com/monthly_demand_profile",
+          "https://api.sgillabs.com/monthly_demand_profile",
           { selectedMonth, checkboxes }
         );
         const month_data = JSON.parse(response.data);
