@@ -81,7 +81,7 @@ export default function FinancialAnalysis({ bessCost, bessPower }) {
     {
       label: "IRR",
       accessor: "irr",
-      backLabel: " / %",
+      backLabel: " %",
       tooltip: "",
     },
     {

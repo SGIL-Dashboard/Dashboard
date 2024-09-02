@@ -99,7 +99,7 @@ export default function RenderForm({
                   {val.label}
                 </span>
                 <input
-                  type="text"
+                  type="number"
                   className={
                     stylings[theme].financialAnalysis.renderedForm.DrInputs
                   }
@@ -142,7 +142,7 @@ export default function RenderForm({
                   }
                 />
                 <input
-                  type="text"
+                  type="number"
                   className={
                     stylings[theme].financialAnalysis.renderedForm.DrInputs
                   }
@@ -188,8 +188,8 @@ export default function RenderForm({
                   }
                 >
                   {
-                    state[formHelper.accessor].inputs[val.accessor]
-                      .totalDrPayment
+                    (state[formHelper.accessor].inputs[val.accessor]
+                      .totalDrPayment).toFixed(2)
                   }
                 </span>
                 {/* <span className=" flex-1">{state[formHelper.accessor].inputs[val.accessor].CommitmentPayment}</span> */}
@@ -352,7 +352,7 @@ export default function RenderForm({
                               });
                             
                           }}
-                          type="text"
+                          type="number"
                           style={{ width: "100%" }}
                           className={
                             errors[val.accessor]
@@ -400,7 +400,7 @@ export default function RenderForm({
                         },
                       });
                     }}
-                    type="text"
+                    type="number"
                     style={{ width: "100%" }}
                     className={
                       errors[val.accessor]

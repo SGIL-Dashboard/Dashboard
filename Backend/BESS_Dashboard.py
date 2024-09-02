@@ -15,8 +15,9 @@ import pathlib
 import numpy_financial as npf
 from scipy.integrate import trapezoid
 import numpy as np
-from scipy.integrate import trapz
+# from scipy.integrate import trapz
 import math
+import traceback
 
 
 import plotly
@@ -87,59 +88,120 @@ fig_monthlyDemand=''
 MaxDemandShaving=''
 bar_graph_data={}
 
-# gets the excel file from list above, and parses the data on the PyLoad sheet
-@app.route('/file_selection', methods=['POST'])
-def file_selection():
-    try:
-        global filename,data_filepath,file,df,buildingName
-        # file = request.files['file']
-        # filename = request.form['filename']
-        # print("we uploaded this file=",filename)
-        print("we are before file processing")
+# # gets the excel file from list above, and parses the data on the PyLoad sheet
+# @app.route('/file_selection', methods=['POST'])
+# def file_selection():
+#     try:
+#         global filename,data_filepath,file,df,buildingName
+#         # file = request.files['file']
+#         # filename = request.form['filename']
+#         # print("we uploaded this file=",filename)
+#         print("we are before file processing")
         
-        if 'file'  in request.files:
-            print("we are in if statement")
-            data=request.json
-            uid=data['UID']
+        
+#         if 'file'  in request.files:
+#             print("we are in if statement")
+#             data=request.json
+#             uid=data['UID']
             
-            file = request.files['file']
-            filename = request.form['name'] 
+#             # file = request.files['file']
+#             # filename = request.form['name'] 
+#             file = data["file"]
+#             filename = data["name"]
              
-            print("we uploaded this file=",filename)
-            buildingName = filename
-            df=pd.read_excel(pd.ExcelFile(file))
-            print("we createed df")
+#             print("we uploaded this file=",filename)
+#             buildingName = filename
+#             df=pd.read_excel(pd.ExcelFile(file))
+#             print("we createed df")
             
-        else:   
-            print("we are in else statement") 
-            # uid=request.UID
-            # print("user_id is =>",uid)
-            data=request.json
-            uid=data['UID']
-            filename=data['selectedOption']
-            uid=data['UID']
-            # print("data=======>",data)
-            data_filepath = os.path.join(directory, data_folder, filename)
-            file = pd.read_excel(data_filepath)
-            df=file
-            buildingName = filename.replace('.xlsx','')
+#         else:   
+#             print("we are in else statement") 
+#             # uid=request.UID
+#             # print("user_id is =>",uid)
+#             data=request.json
+#             uid=data['UID']
+#             filename=data['selectedOption']
+#             uid=data['UID']
+#             # print("data=======>",data)
+#             data_filepath = os.path.join(directory, data_folder, filename)
+#             file = pd.read_excel(data_filepath)
+#             df=file
+#             buildingName = filename.replace('.xlsx','')
         
-        # df=file.parse("PyLoad")
+#         # df=file.parse("PyLoad")
             
 
         
        
         
-        data_preprocessing(df,uid)
+#         data_preprocessing(df,uid)
         
-        return jsonify({'status':"success"})
+#         return jsonify({'status':"success"})
 
-    except:
-        print("default file uid not found= >")
-        return jsonify({'exception':"error"})
+#     except Exception as e:
+#         print("An exception occurred: ", e)
+#         print(traceback.format_exc())  # Print the traceback for more detailed debugging
+#         return jsonify({'exception': "error"})
+#     # except:
+#     #     print("default file uid not found= >")
+#     #     return jsonify({'exception':"error"})
 
 
+@app.route('/file_selection', methods=['POST'])
+def file_selection():
+    try:
+        global filename, data_filepath, file, df, buildingName
+        
+        uid = None  # Initialize uid
+        data = request.form.to_dict() if 'file' in request.files else request.json
+        
+        if 'file' in request.files:
+            print("we are in if statement")
+            uid = data.get('UID', None)  # Safely get UID
+            
+            file = request.files['file']
+            filename = request.form['name']
+            
+            print("we uploaded this file=",filename)
+            buildingName = filename
+            if not filename.endswith('.xlsx'):
+                filename += '.xlsx'
 
+            # Save file temporarily
+            temp_filepath = os.path.join(directory, 'data', filename)
+            file.save(temp_filepath)
+            print(f"File temporarily saved at: {temp_filepath}")
+            # df=pd.read_excel(pd.ExcelFile(file))
+            if not os.path.isfile(temp_filepath):
+                raise FileNotFoundError(f"File not found at path: {temp_filepath}")
+
+            df = pd.read_excel(temp_filepath)
+            print("we created df")
+            if os.path.isfile(temp_filepath):
+                os.remove(temp_filepath)
+            
+        else:
+            print("we are in else statement")
+            uid = data.get('UID', None)  # Safely get UID
+            filename = data['selectedOption']
+            if not filename.endswith('.xlsx'):
+                filename += '.xlsx'
+            data_filepath = os.path.join(directory, data_folder, filename)
+            df = pd.read_excel(data_filepath)
+            buildingName = filename.replace('.xlsx', '')
+
+        # Ensure uid is not None before proceeding
+        if uid is None:
+            raise ValueError("UID is not provided in the request.")
+        
+        data_preprocessing(df, uid)
+        
+        return jsonify({'status': "success"})
+
+    except Exception as e:
+        print("An exception occurred: ", e)
+        print(traceback.format_exc())  # Print the traceback for more detailed debugging
+        return jsonify({'exception': "error"})
 #-------------------- End Get Data --------------------------------------------------------
 
 @app.route('/get_all_files', methods=['GET'])
@@ -250,8 +312,14 @@ def data_preprocessing(df,uid):
     #'''-------------------- Start Create Pivots for 3D Graphs -----------------------------------------------
 
     # Resample the data to average hourly demand
-    monthly_resample = df.resample('H').mean()
-    daily_resample = df.resample('H').mean()
+    # monthly_resample = df.resample('H').mean()
+    # daily_resample = df.resample('H').mean()
+
+    # itsme
+    # FutureWarning:
+    # 'H' is deprecated and will be removed in a future version, please use 'h' instead.
+    monthly_resample = df.resample('h').mean()
+    daily_resample = df.resample('h').mean()
 
     # Create new columns for month and hour
     monthly_resample['Hour'] = monthly_resample.index.hour
@@ -464,14 +532,15 @@ def data_preprocessing_date(df,uid,start_date,end_date,start_time,end_time):
 #'''---------------------- Start Create BESS DF -------------------------------------------------------
 @app.route('/Fancial_Analysis', methods=['POST'])
 def FA():
-    filename = "Administration Building.xlsx"
-    data_folder = "data"
-    results_folder = "results"
-    directory = pathlib.Path(__file__).parent.resolve()
-    data_filepath = os.path.join(directory, data_folder, filename)
-    file = pd.ExcelFile(data_filepath)
-    df=file.parse("PyLoad")
-    buildingName = filename.replace('PyLoad.xlsx','')
+    # Commented the below code
+    # filename = "Administration Building.xlsx"
+    # data_folder = "data"
+    # results_folder = "results"
+    # directory = pathlib.Path(__file__).parent.resolve()
+    # data_filepath = os.path.join(directory, data_folder, filename)
+    # file = pd.ExcelFile(data_filepath)
+    # df=file.parse("PyLoad")
+    # buildingName = filename.replace('PyLoad.xlsx','')
 
     #-------------------- End Get Data --------------------------------------------------------
 
@@ -977,6 +1046,14 @@ def FA():
     print("\n npv: ", npv, "\n irr: ", irr, "\n payback_period: ", payback_period, "\n lcoe: ", lcoe, "\n itc: ", ITC_amount, "\n year 1 bill savings: ", bill_savings_yr1, "\n demand response capacity revenue: ", dr_rev_yr1 )
     # return jsonify({'message':"success", 'npv':npv, 'irr':irr, 'payback_period':payback_period, 'lcoe':lcoe, 'itc':ITC_amount, 'year1_bill_savings':bill_savings_yr1, 'dr_capacity_revenue':dr_rev_yr1, 'project_cashflows':project_cashflows.to_json()})
     print('\n project_cashflows: \n', project_cashflows)
+    # data_folder = "data"
+    # results_folder = "results"
+    # filename="Administration Building.xlsx"
+    # directory = pathlib.Path(__file__).parent.resolve()
+    # data_filepath = os.path.join(directory, data_folder, filename)
+    # file = pd.ExcelFile(data_filepath)
+    # df=file.parse("PyLoad")
+    # buildingName = filename.replace('PyLoad.xlsx','')
     return jsonify({"message" : "success" , "npv" : int(npv) ,"irr" : int(irr) , "payback_period" : int(payback_period) , "lcoe" : int(lcoe) , "itc" : int(ITC_amount) , "year1_bill_savings" : int(bill_savings_yr1) , "dr_capacity_revenue" : int(dr_rev_yr1) })
 
 def bess_filter(data):
@@ -1035,8 +1112,11 @@ def bess_filter(data):
             
                 #integrate over the demand (kW) curve between the start and end times indicated with the x intervals = 1 for
                 #each 15 min interval. Therefore, to get kWh, divide the energy result by 4 
-                energy_under_curve = trapz(demandIntegrate, dateIntegrate_int)
-                energy_under_line = trapz(currentPeakDemand * np.ones_like(demandIntegrate), dateIntegrate_int)
+                energy_under_curve = trapezoid(demandIntegrate, dateIntegrate_int)
+                energy_under_line = trapezoid(currentPeakDemand * np.ones_like(demandIntegrate), dateIntegrate_int)
+                # Changed trapz to trapazoid as trapz is deprecated
+                # energy_under_curve = trapz(demandIntegrate, dateIntegrate_int)
+                # energy_under_line = trapz(currentPeakDemand * np.ones_like(demandIntegrate), dateIntegrate_int)
                 energy = (energy_under_curve - energy_under_line).astype(timedelta)/4
                 duration = (dateIntegrate_int.shape[0]-1)*15
                 charge = math.copysign(1,energy)

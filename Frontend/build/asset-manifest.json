@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/static/css/main.84d0cef2.css",
-    "main.js": "/static/js/main.cb945e67.js",
+    "main.css": "/static/css/main.2a8b34e0.css",
+    "main.js": "/static/js/main.a870b61e.js",
     "static/js/787.9e9f4ffd.chunk.js": "/static/js/787.9e9f4ffd.chunk.js",
     "static/media/Administration Building.jpg": "/static/media/Administration Building.d5880f6cebd34a9293fc.jpg",
     "static/media/Baskerville Hall.jpg": "/static/media/Baskerville Hall.8fd2a1a6230b06bc228c.jpg",
@@ -15,12 +15,12 @@
     "static/media/NAC_Northside.jpg": "/static/media/NAC_Northside.62e972d5e414362d5b79.jpg",
     "static/media/logo.png": "/static/media/logo.95f41a69ad382914a09d.png",
     "index.html": "/index.html",
-    "main.84d0cef2.css.map": "/static/css/main.84d0cef2.css.map",
-    "main.cb945e67.js.map": "/static/js/main.cb945e67.js.map",
+    "main.2a8b34e0.css.map": "/static/css/main.2a8b34e0.css.map",
+    "main.a870b61e.js.map": "/static/js/main.a870b61e.js.map",
     "787.9e9f4ffd.chunk.js.map": "/static/js/787.9e9f4ffd.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.84d0cef2.css",
-    "static/js/main.cb945e67.js"
+    "static/css/main.2a8b34e0.css",
+    "static/js/main.a870b61e.js"
   ]
 }

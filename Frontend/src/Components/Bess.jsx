@@ -44,7 +44,7 @@ const Bess = () => {
     setBessOut({});
     try {
       const response = await axios.post(
-        "https://api.sgillabs.com/bess_calculation",
+        "http://api.sgillabs.com/bess_calculation",
         { inputs }
       );
       setBessOut(response.data);
@@ -69,7 +69,7 @@ const Bess = () => {
     const fetch3dMonthlyData = async () => {
       try {
           const response = await axios.get(
-            "https://api.sgillabs.com/give_comp_3D_monthly_plot"
+            "http://api.sgillabs.com/give_comp_3D_monthly_plot"
           );
         const month_data = JSON.parse(response.data);
         setMonth3Data(month_data);
@@ -84,7 +84,7 @@ const Bess = () => {
     const fetch3dDailyData = async () => {
       try {
         const response = await axios.get(
-          "https://api.sgillabs.com/give_comp_3D_daily_plot"
+          "http://api.sgillabs.com/give_comp_3D_daily_plot"
         );
         const daily_data = JSON.parse(response.data);
         setDaily3Data(daily_data);

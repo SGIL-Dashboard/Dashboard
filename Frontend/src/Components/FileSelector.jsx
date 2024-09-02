@@ -19,10 +19,12 @@ import { globalContext } from "../Context/Context";
 import { useContext } from "react";
 import FinancialAnalysis from "./Financial_Analysis/Financial_Analysis";
 import StartupInstructions from "./StartupInstructions";
+import InfoButton from "./InfoButton";
 const FileSelector = () => {
   const { theme } = useContext(globalContext);
   const rollDownContianer = useRef(null);
   const parentRef = useRef(null);
+  const [isCustomFileUploaded, setIsCustomFileUploaded] = useState(false);
   const [selectedOption, setSelectedOption] = useState("");
   const [selectedInstance, setSelectedInstance] = useState("");
   const [toggle, setToggle] = useState(false);
@@ -49,9 +51,7 @@ const FileSelector = () => {
   };
   const fetchData = async () => {
     try {
-      const response = await axios.get(
-        "https://api.sgillabs.com/get_all_files"
-      );
+      const response = await axios.get("http://api.sgillabs.com/get_all_files");
       const data = response.data.all_file;
       setFileData(data);
     } catch (error) {
@@ -62,7 +62,7 @@ const FileSelector = () => {
     try {
       setDfData("");
       const response = await axios.post(
-        "https://api.sgillabs.com/file_selection",
+        "http://api.sgillabs.com/file_selection",
         { selectedOption, UID: getUniqueId() }
       );
       setDfData(response.data.status);
@@ -81,43 +81,99 @@ const FileSelector = () => {
       fileName();
     }
   }, [selectedOption]);
+
+  // const handleSubmit = async () => {
+  //   const errors = {};
+  //   if (!dataInput.name) {
+  //     toast.error("Please enter valid name for file");
+  //     return;
+  //   } else if (!dataInput.file) {
+  //     toast.error("Please enter a xlsx file");
+  //     return;
+  //   }
+  //   try {
+  //     setUploadFileUnderProcess(true);
+  //     const { data, error } = await makeApiRequest({
+  //       method: "post",
+  //       urlPath: "file_selection",
+  //       body: {
+  //         name: dataInput.name,
+  //         file: dataInput.file,
+  //         UID: getUniqueId(),
+  //       },
+  //       convertToFormData: true,
+  //     });
+  //     if (data) {
+  //       toast.success("Your file uploaded successfully");
+  //       // setToggle(false);
+  //       // setFName("");
+  //       // setDataInput({name : "" , file : ""});
+  //       setSelectedOption(dataInput.name);
+  //       setIsCustomFileUploaded(true);
+  //       setSelectionUpdated(true);
+  //     } else {
+  //       toast.error("Error uploading file , please try again later");
+  //     }
+  //     setUploadFileUnderProcess(false);
+  //   } catch (e) {
+  //     setUploadFileUnderProcess(false);
+  //     toast.error("Error uploading file , please try again later");
+  //   }
+  // };
+
+  // itsme
+
   const handleSubmit = async () => {
     const errors = {};
+
+    // Check if the name field is empty
     if (!dataInput.name) {
-      toast.error("please enter valid name for file");
-      return;
-    } else if (!dataInput.file) {
-      toast.error("please enter a xlsx file");
+      toast.error("Please enter a valid name for the file");
       return;
     }
+
+    // Check if the file is provided and is an .xlsx file
+    if (!dataInput.file) {
+      toast.error("Please select an .xlsx file");
+      return;
+    }
+
     try {
-      setUploadFileUnderProcess(true);
-      const { data, error } = await makeApiRequest({
-        method: "post",
-        urlPath: "file_selection",
-        body: {
-          name: dataInput.name,
-          file: dataInput.file,
-          UID: getUniqueId(),
-        },
-        convertToFormData: true,
-      });
-      if (data) {
-        toast.success("your file uploaded successfully");
-        // setToggle(false);
-        // setFName("");
-        // setDataInput({name : "" , file : ""});
+      setUploadFileUnderProcess(true); // Start the loading state
+
+      // Prepare the form data
+      const formData = new FormData();
+      formData.append("name", dataInput.name);
+      formData.append("file", dataInput.file);
+      formData.append("UID", getUniqueId());
+
+      // Make the API request to upload the file
+      const response = await axios.post(
+        "http://api.sgillabs.com/file_selection",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      // Handle the response
+      if (response.status === 200 && response.data.status === "success") {
+        toast.success("Your file uploaded successfully");
         setSelectedOption(dataInput.name);
+        setIsCustomFileUploaded(true);
         setSelectionUpdated(true);
       } else {
-        toast.error("Error uploading file , please try again later");
+        toast.error("Error uploading file, please try again later");
       }
-      setUploadFileUnderProcess(false);
     } catch (e) {
-      setUploadFileUnderProcess(false);
-      toast.error("Error uploading file , please try again later");
+      toast.error("An unexpected error occurred. Please try again later.");
+    } finally {
+      setUploadFileUnderProcess(false); // End the loading state
     }
   };
+
   return (
     <div className="w-full flex flex-grow flex-col">
       <div className={stylings[theme].introSection.parent}>
@@ -209,7 +265,7 @@ const FileSelector = () => {
                       .selectedFileContainer
                   }
                 >
-                  {selectedOption && (
+                  {selectedOption && !isCustomFileUploaded && (
                     <img
                       onClick={() => {
                         setExpandImg(true);
@@ -228,7 +284,7 @@ const FileSelector = () => {
                   )}
                   <div
                     className={
-                      selectedOption
+                      selectedOption && !isCustomFileUploaded
                         ? stylings[theme].introSection.fileSelectorPack
                             .selectionOptionDiv
                         : `${stylings[theme].introSection.fileSelectorPack.selectionOptionDiv} flex-grow`
@@ -251,7 +307,7 @@ const FileSelector = () => {
                             : `${stylings[theme].introSection.fileSelectorPack.selectedFile}`
                         }
                       >
-                        {selectedInstance
+                        {selectedInstance && !isCustomFileUploaded
                           ? selectedInstance.split(".xlsx")[0]
                           : "Select Building To Analyze"}
                       </span>
@@ -306,6 +362,7 @@ const FileSelector = () => {
                         }}
                         onClick={() => {
                           setSelectedOption(val);
+                          setIsCustomFileUploaded(false);
                           setSelectedInstance(val);
                           setRollDown(false);
                         }}
@@ -336,8 +393,9 @@ const FileSelector = () => {
                 onSubmit={(e) => {
                   e.preventDefault();
                 }}
-                className=" w-[50%] h-[5rem] shrink-0 gap-[1rem] flex justify-center items-center"
+                className="relative w-[50%] h-[5rem] shrink-0 gap-[1rem] flex justify-center items-center"
               >
+                <InfoButton />
                 <div className=" relative w-[30%]">
                   <input
                     value={dataInput.name}
